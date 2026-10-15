@@ -221,11 +221,6 @@ textarea.fld{width:100%;min-height:90px;border:1px solid var(--chrome-line);back
   body{background:#fff}
   .bar,.pool,.pop,.ov,.toast,.noprint,.addsel{display:none!important}
   .wrap{padding:0}
-  .sheet{box-shadow:none;max-width:none;padding:0;border-radius:0}
-  .shifts{grid-template-columns:var(--fw,3fr) var(--sw,2fr)!important}
-  .list{column-count:var(--cols,2)!important}
-  .sh-foot{grid-template-columns:1.3fr 1fr 1fr!important}
-  .sign{justify-content:flex-end!important}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
@@ -393,11 +388,20 @@ function qCount(list,q){ return list.filter(e=>e.q.includes(q)).length; }
 
 function groupRows(list){ const byArt=S.groupBy==='art'; const keys = byArt ? artList() : S.areas; return list.length + keys.filter(a=>list.some(e=>(byArt?artOf(e):areaOf(e))===a)).length; }
 // Druckspalten auf beide Schichten verteilen, max. 6 (A3) bzw. 5 (A4) Spalten nebeneinander
+// Druckspalten so verteilen, dass beide Schichten möglichst gleich hoch werden und die Zeilen groß bleiben
 function printCols(rF, rS){
-  const C = S.paper==='A4' ? 5 : 6;
-  let f = Math.max(1, Math.ceil(rF/12)), s = Math.max(1, Math.ceil(rS/12));
-  if(f+s > C){ f = Math.min(C-1, Math.max(1, Math.round(C*rF/Math.max(1,rF+rS)))); s = C-f; }
-  return [f, s];
+  const g=paperGeo();
+  const pc=(r,c)=>r ? Math.ceil(r/c)+(c>1?1:0) : 0;
+  let best=null;
+  for(let f=1; f<g.C; f++) for(let s=1; f+s<=g.C; s++){
+    if((rF && f>rF) || (rS && s>rS) || (!rF && f>1) || (!rS && s>1)) continue;
+    const a=pc(rF,f), b=pc(rS,s), m=Math.max(a,b,1), h=Math.min(g.list/m, g.rowMax);
+    const fills=[a,b].filter(Boolean).map(x=>x*h/g.list);
+    // Wertung: beide Kästen möglichst voll, dann größere Zeilen; zu kleine Zeilen stark abwerten
+    const score = (fills.length? fills.reduce((x,y)=>x+y)/fills.length : 0) + 0.05*h/g.rowMax - (h<g.rowMin ? 1 : 0);
+    if(!best || score>best.score+1e-9 || (Math.abs(score-best.score)<1e-9 && f+s<best.f+best.s)) best={f,s,score};
+  }
+  return best ? [best.f,best.s] : [1,1];
 }
 function panelHtml(sh, list, groupLbl, pcols){
   const cls = sh==='F'?'f':'s';
@@ -406,7 +410,7 @@ function panelHtml(sh, list, groupLbl, pcols){
                         : S.areas.map(a=>({a, items:list.filter(e=>areaOf(e)===a).sort(sortE)}))).filter(x=>x.items.length);
   const rows = list.length + byArea.length;
   const cols = Math.max(1, Math.min(4, Math.ceil(rows/8)));
-  const perCol = Math.ceil(rows/pcols);
+  const perCol = Math.ceil(rows/pcols) + (pcols>1 && byArea.length>1 ? 1 : 0);
   let body = byArea.map(({a,items})=>`<div class="area" data-drop="${sh}"${byArt?'':` data-area="${esc(a)}"`}><div class="ah"><span>${esc(a)}</span><span>${items.length}</span></div>${
     items.map(e=>`<div class="row${e.id===selId?' sel':''}" data-id="${e.id}" draggable="true" tabindex="0" title="${esc(e.vn+' '+e.nn+' · '+(e.art||'')+' · '+GSHORT[e.g])}"><span class="nm">${esc(nameOf(e))}</span>${swapped(e)?'<span class="sw" title="nur diese Woche getauscht">*</span>':''}${lockedTo(e)?LOCK:''}${S.showArt&&!byArt&&ARTCODE[e.art]?`<span class="ac">${ARTCODE[e.art]}</span>`:''}<span class="bd">${badges(e)}</span></div>`).join('')
   }</div>`).join('');
@@ -418,7 +422,6 @@ function panelHtml(sh, list, groupLbl, pcols){
     <div class="addsel"><select data-addto="${sh}" aria-label="Mitarbeiter in die ${SHNAME[sh]} einplanen">${addOptions(sh,'+ Mitarbeiter einplanen …')}</select>${byArt?'':`<select class="ar" data-addarea="${sh}" aria-label="Bereich"><option value="">Bereich: wie bisher</option>${S.areas.map(a=>`<option>${esc(a)}</option>`).join('')}</select>`}</div></section>`};
 }
 // Druck: Zeilen werden kleiner, wenn eine Spalte sonst nicht auf die Seite passt
-function printScale(perCol){ const cap = S.paper==='A4' ? 14 : 12; return Math.max(0.4, Math.min(1, cap/Math.max(1,perCol))).toFixed(3); }
 function artMix(list){ const parts=artList().map(a=>[a,list.filter(e=>artOf(e)===a).length]).filter(x=>x[1]); return parts.map(([a,n])=>`${ARTSHORT[a]||a} ${n}`).join(' · ')||'&nbsp;'; }
 function addOptions(sh, placeholder){
   const cand=S.emps.filter(e=>eff(e)!==sh);
@@ -433,13 +436,56 @@ function mixTable(F,Sp){
   const rows=artList().map(a=>[a,F.filter(e=>artOf(e)===a).length,Sp.filter(e=>artOf(e)===a).length]).filter(r=>ARTS.includes(r[0])||r[1]||r[2]);
   return `<table class="mixt"><tr><th>Beschäftigung</th><th class="fz">Früh</th><th class="sz">Spät</th><th>Σ</th></tr>${rows.map(([a,f,s])=>`<tr><td>${esc(ARTSHORT[a]||a)}</td><td>${f}</td><td>${s}</td><td>${f+s}</td></tr>`).join('')}<tr class="tot"><td>Gesamt</td><td>${F.length}</td><td>${Sp.length}</td><td>${F.length+Sp.length}</td></tr></table>`;
 }
+// Druckgeometrie in mm. @page-Rand 0: dann hat der Browser keinen Platz für Link, Datum, Titel und Seitenzahl.
+const PAPER = {
+  A3:{w:420,h:297,pad:11, list:190, rowMin:9,  rowMax:17, fontMax:7.2, C:6},
+  A4:{w:297,h:210,pad:8,  list:133, rowMin:6.4,rowMax:12, fontMax:5.1, C:6}
+};
+function paperGeo(){ return PAPER[S.paper==='A4'?'A4':'A3']; }
 function applyPaper(){
   let st=document.getElementById('pgStyle');
   if(!st){ st=document.createElement('style'); st.id='pgStyle'; document.body.appendChild(st); }
-  const a3=S.paper!=='A4';
-  st.textContent = a3
-    ? '@page{size:A3 landscape;margin:12mm}@media print{.sheet{font-size:16px}.kw{font-size:104px}.range{font-size:28px}.sub{font-size:14px}.eyebrow{font-size:13px}.tally{min-width:110px;padding:12px 14px 10px}.tally b{font-size:42px}.tally span{font-size:13px}.ph{padding:12px 16px 10px}.ph h2{font-size:40px}.ph .qs{font-size:17px}.ph .arts{font-size:14px}.ptime{font-size:14px}.ptime b{font-size:20px}.band{height:8px}.shifts{grid-template-columns:var(--pfw) var(--psw)!important;gap:18px;margin-top:18px}.list{column-count:var(--pcols)!important}.ah{font-size:calc(14px * var(--ps,1));padding:calc(8px * var(--ps,1)) 18px calc(4px * var(--ps,1))}.row{font-size:calc(22px * var(--ps,1));min-height:calc(48px * var(--ps,1));padding:calc(9px * var(--ps,1)) 18px calc(8px * var(--ps,1))}.b{font-size:calc(12.5px * var(--ps,1));padding:1px 5px 0}.row .ac{font-size:11px}.row .lk{width:14px;height:14px}.mixt{font-size:13.5px}.sh-foot{font-size:12.5px}.absent{font-size:14px}.sign i{width:220px}}'
-    : '@page{size:A4 landscape;margin:9mm}@media print{.shifts{grid-template-columns:var(--pfw) var(--psw)!important}.list{column-count:var(--pcols)!important}.ah{font-size:calc(9.5px * var(--ps,1));padding:calc(4px * var(--ps,1)) 10px calc(2px * var(--ps,1))}.row{font-size:calc(12.5px * var(--ps,1));min-height:calc(26px * var(--ps,1));padding:calc(4px * var(--ps,1)) 10px calc(3px * var(--ps,1))}.b{font-size:calc(8.5px * var(--ps,1))}.mixt{font-size:9.5px}}';
+  const a3=S.paper!=='A4', g=paperGeo(), k=a3?1:0.72;
+  const mm=v=>(v*k).toFixed(2)+'mm';
+  st.textContent = `@page{size:${a3?'A3':'A4'} landscape;margin:0}
+@media print{
+  html,body{margin:0!important;padding:0!important;background:#fff!important}
+  .wrap{padding:0!important}
+  .sheet{box-sizing:border-box;width:${g.w}mm;height:${g.h}mm;max-width:none;margin:0;padding:${g.pad}mm ${g.pad+1}mm ${g.pad-2}mm;display:flex;flex-direction:column;overflow:hidden;box-shadow:none;border-radius:0}
+  .sh-head{flex:none;padding-bottom:${mm(3)};gap:${mm(6)}}
+  .eyebrow{font-size:${mm(3.2)}}
+  .kw{font-size:${mm(25)};line-height:.82}
+  .kw-row{gap:${mm(6)}}
+  .range{font-size:${mm(7)}}
+  .sub{font-size:${mm(3.4)};margin-top:${mm(1)}}
+  .mixt{font-size:${mm(3.1)}}
+  .head-r{gap:${mm(5)}}
+  .tally{min-width:${mm(27)};padding:${mm(2.6)} ${mm(3)} ${mm(2.2)};border-radius:${mm(1.2)}}
+  .tally b{font-size:${mm(10)}}
+  .tally span{font-size:${mm(3.1)};margin-top:${mm(1)}}
+  .shifts{flex:1 1 auto;min-height:0;margin-top:${mm(4)};gap:${mm(4)};align-items:stretch;grid-template-columns:var(--pfw) var(--psw)!important}
+  .panel{display:flex;flex-direction:column;min-height:0;border-radius:${mm(1.2)}}
+  .ph{flex:none;padding:${mm(2.6)} ${mm(3.5)} ${mm(2.2)}}
+  .ph h2{font-size:${mm(9.5)}}
+  .ph .qs{font-size:${mm(4)};margin-top:${mm(.8)}}
+  .ph .arts{font-size:${mm(3.2)}}
+  .ptime{font-size:${mm(3.3)}}
+  .ptime b{font-size:${mm(4.8)}}
+  .band{flex:none;height:${mm(2)}}
+  .list{flex:1 1 auto;min-height:0;column-count:var(--pcols)!important;column-fill:balance;padding:${mm(1)} 0 0}
+  .area{display:contents}
+  .ah,.row{box-sizing:border-box;height:min(calc(100% / var(--rpc)), ${g.rowMax}mm);min-height:0;padding:0 ${mm(3.5)};margin:0}
+  .ah{display:flex;align-items:flex-end;padding-bottom:${mm(.8)};font-size:min(calc(${g.list}mm / var(--rpc) * .3), ${mm(3.6)})}
+  .row{display:flex;align-items:center;font-size:min(calc(${g.list}mm / var(--rpc) * .42), ${g.fontMax}mm)}
+  .row .nm{line-height:1.12}
+  .b{font-size:.5em;padding:.1em .3em 0;border-radius:.25em}
+  .row .ac{font-size:.5em}
+  .row .lk{width:.6em;height:.6em}
+  .absent{flex:none;font-size:${mm(3.4)};margin-top:${mm(2.5)}}
+  .sh-foot{flex:none;margin-top:${mm(3)};font-size:${mm(2.9)};grid-template-columns:1.3fr 1fr 1fr!important}
+  .sign{justify-content:flex-end!important}
+  .sign i{width:${mm(55)}}
+}`;
   const pb=document.getElementById('printB'); if(pb) pb.textContent='Drucken ('+(a3?'A3':'A4')+')';
 }
 
@@ -460,7 +506,7 @@ function render(){
         <div class="kw-row"><h1 class="kw">KW ${w}</h1><div><div class="range">${rangeTxt(curMon)}</div><div class="sub">Schichtplan · ${esc(S.site)}</div></div></div></div>
       <div class="head-r">${mixTable(F,Sp)}<div class="tallies"><div class="tally f"><b>${F.length}</b><span>Frühschicht</span></div><div class="tally s"><b>${Sp.length}</b><span>Spätschicht</span></div></div></div>
     </header>
-    <div class="shifts" style="--fw:${Math.max(pf.cols,1)}fr;--sw:${Math.max(ps.cols,1)}fr;--pfw:${pf.pcols}fr;--psw:${ps.pcols}fr;--ps:${printScale(Math.max(pf.perCol,ps.perCol))}">${pf.html}${ps.html}</div>
+    <div class="shifts" style="--fw:${Math.max(pf.cols,1)}fr;--sw:${Math.max(ps.cols,1)}fr;--pfw:${pf.pcols}fr;--psw:${ps.pcols}fr;--rpc:${Math.max(1,pf.perCol,ps.perCol)}">${pf.html}${ps.html}</div>
     ${absTxt}
     <footer class="sh-foot">
       <div><b>Qualifikationen:</b> ${quals().map(q=>esc(q.c+' '+q.n)).join(' · ')} · <span style="color:var(--orange);font-weight:700">*</span> nur diese Woche getauscht · <span style="color:var(--petrol)">${LOCK.replace('class="lk"','class="lk" style="width:9px;height:9px;vertical-align:-1px"')}</span> fest, wechselt nicht${S.showArt&&S.groupBy!=='art'?' · FA Fest · TZ Teilzeit · MJ Minijob · AZ Azubi · LT Litauer':''}</div>
