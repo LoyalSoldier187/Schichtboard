@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Schichtboard Bischofsheim</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: druckfertiges Wochenblatt (Papier) auf ruhiger Arbeitsfläche, darunter der Pool zum Einplanen */
+:root{
+  --paper:#ffffff; --ink:#1b1f22; --muted:#6c7479; --line:#e4e7e9; --line-2:#cfd5d8;
+  --petrol:#0f4c59; --petrol-band:#1d8296; --orange:#c25f1c; --hazard:#f0b429; --hazard-dk:#1b1f22;
+  --eh:#2a8a57; --bs:#c0392b; --q:#6c7479;
+  --page:#e7eaec; --chrome:#ffffff; --chrome-ink:#1b1f22; --chrome-muted:#6c7479; --chrome-line:#d6dbde; --chrome-soft:#f2f4f5;
+  --focus:#1d8296;
+  --f-disp:'Barlow Condensed','Arial Narrow','Roboto Condensed',sans-serif;
+  --f-body:'Barlow','Segoe UI',Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--page:#121618;--chrome:#1b2023;--chrome-ink:#e6eaec;--chrome-muted:#9aa3a8;--chrome-line:#2d3438;--chrome-soft:#232a2e;--focus:#5fc0d2;color-scheme:dark}
+}
+:root[data-theme="dark"]{--page:#121618;--chrome:#1b2023;--chrome-ink:#e6eaec;--chrome-muted:#9aa3a8;--chrome-line:#2d3438;--chrome-soft:#232a2e;--focus:#5fc0d2;color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--page);color:var(--chrome-ink);font-family:var(--f-body);font-size:14px;margin:0}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* ---------- Toolbar ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--chrome);border-bottom:1px solid var(--chrome-line);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px}
+.bar-in{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.brand{font-family:var(--f-disp);font-weight:800;font-size:20px;letter-spacing:.01em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.brand i{width:10px;height:22px;background:linear-gradient(var(--petrol) 50%,var(--orange) 50%);display:inline-block;border-radius:2px}
+.wknav{display:flex;align-items:center;gap:4px}
+.wknav .lbl{font-family:var(--f-disp);font-weight:700;font-size:18px;min-width:84px;text-align:center;font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--chrome-line);background:var(--chrome);border-radius:6px;padding:6px 11px;cursor:pointer;line-height:1.2;white-space:nowrap}
+.btn:hover{background:var(--chrome-soft)}
+.btn.ic{padding:6px 10px;font-weight:700}
+.btn.pri{background:var(--petrol);border-color:var(--petrol);color:#fff}
+.btn.pri:hover{background:#0b3d48}
+.btn.warn{border-color:var(--bs);color:var(--bs)}
+.btn:disabled{opacity:.45;cursor:default}
+.spacer{flex:1}
+.segt{display:flex;border:1px solid var(--chrome-line);border-radius:6px;overflow:hidden}
+.segt span{font-size:12px;color:var(--chrome-muted);padding:6px 8px;background:var(--chrome-soft)}
+.segt button{border:none;border-left:1px solid var(--chrome-line);background:var(--chrome);padding:6px 10px;cursor:pointer}
+.segt button.on{background:var(--chrome-ink);color:var(--chrome)}
+.swapbar{flex-basis:100%;display:flex;align-items:center;gap:10px;background:#fff4e6;color:#7a3a0e;border:1px solid #f0c48f;border-radius:6px;padding:7px 12px}
+.swapbar b{font-weight:700}
+
+/* ---------- Sheet (Papier) ---------- */
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.sheet{max-width:1240px;margin:0 auto;background:var(--paper);color:var(--ink);border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 30px rgba(0,0,0,.08);padding:28px 30px 22px}
+.sh-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:none}
+.kw-row{display:flex;align-items:flex-end;gap:22px;flex-wrap:wrap}
+.kw{font-family:var(--f-disp);font-weight:800;font-size:clamp(48px,7vw,74px);line-height:.85;margin:4px 0 0;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.range{font-family:var(--f-disp);font-weight:700;font-size:20px;line-height:1.1}
+.sub{font-size:11px;color:var(--muted);margin-top:4px}
+.tallies{display:flex;gap:8px}
+.tally{min-width:76px;border-radius:5px;padding:8px 10px 7px;color:#fff;display:flex;flex-direction:column}
+.tally b{font-family:var(--f-disp);font-weight:800;font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.tally span{font-size:9.5px;font-weight:600;margin-top:4px}
+.tally.f{background:var(--petrol)} .tally.s{background:var(--orange)}
+
+.shifts{display:grid;grid-template-columns:var(--fw,3fr) var(--sw,2fr);gap:12px;margin-top:12px;align-items:start}
+.panel{border:1px solid var(--line-2);border-radius:5px;overflow:hidden;min-width:0;background:var(--paper);transition:box-shadow .12s}
+.ph{color:#fff;padding:9px 12px 8px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.panel.f .ph{background:var(--petrol)} .panel.s .ph{background:var(--orange)}
+.ph h2{font-family:var(--f-disp);font-weight:800;font-size:24px;margin:0;line-height:1}
+.ph .qs{font-family:var(--f-disp);font-weight:700;font-size:13px;margin-top:3px;letter-spacing:.02em}
+.ptime{text-align:right;white-space:nowrap;font-size:11px}
+.ptime b{font-family:var(--f-disp);font-weight:700;font-size:15px;margin-right:4px}
+.band{height:6px}
+.panel.f .band{background:var(--petrol-band)}
+.panel.s .band{background:repeating-linear-gradient(-45deg,var(--hazard) 0 7px,var(--hazard-dk) 7px 14px)}
+
+.list{column-count:var(--cols,2);column-gap:0;column-rule:1px solid var(--line);padding:8px 0 10px;min-height:120px}
+.area{padding:0}
+.ah{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;color:var(--ink);padding:4px 12px 2px;break-after:avoid;break-inside:avoid}
+.ah span:last-child{font-variant-numeric:tabular-nums}
+.row{display:flex;align-items:center;gap:3px;padding:6px 12px 5px;margin:0 0;border-bottom:1px solid var(--line);break-inside:avoid;cursor:pointer;font-size:15px;min-height:34px;user-select:none;background:var(--paper)}
+.row:hover{background:#f3f7f8}
+.row.sel{background:#e5f2f5;box-shadow:inset 3px 0 0 var(--petrol-band)}
+.row.dragging{opacity:.35}
+.row .nm{min-width:0;overflow-wrap:anywhere;line-height:1.2}
+.row .sw{color:var(--orange);font-weight:700;flex:none}
+.row .bd{margin-left:auto;display:flex;gap:2px;flex:none;padding-left:6px}
+.b{font-style:normal;font-size:8.5px;font-weight:700;border:1px solid var(--q);color:var(--q);border-radius:3px;padding:1px 3px 0;line-height:1.25;letter-spacing:.02em}
+.b.eh{border-color:var(--eh);color:var(--eh)} .b.bs{border-color:var(--bs);color:var(--bs)}
+.emptyz{margin:10px 12px;border:1.5px dashed var(--line-2);border-radius:5px;padding:24px 10px;text-align:center;color:var(--muted);font-size:12px;column-span:all}
+.drop-on{box-shadow:inset 0 0 0 2px var(--focus)!important;background:#eef8fa!important}
+.panel.drop-on{box-shadow:0 0 0 2px var(--focus)!important}
+
+.row .lk{flex:none;width:11px;height:11px;color:var(--petrol);margin-left:3px}
+.row .ac{flex:none;font-size:8.5px;font-weight:700;color:var(--muted);background:#eef1f2;border-radius:3px;padding:1px 3px 0;margin-left:5px;letter-spacing:.02em}
+.ph .arts{font-size:10.5px;font-weight:500;opacity:.9;margin-top:2px}
+.mixt{border-collapse:collapse;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mixt th{font-weight:700;padding:0 6px 2px;text-align:right;color:var(--ink)}
+.mixt th:first-child{text-align:left;padding-left:0}
+.mixt td{padding:1px 6px;text-align:right;border-top:1px solid var(--line)}
+.mixt td:first-child{text-align:left;padding-left:0}
+.mixt tr.tot td{color:var(--ink);font-weight:700;border-top:1px solid var(--line-2)}
+.mixt .fz{color:var(--petrol);font-weight:700} .mixt .sz{color:var(--orange);font-weight:700}
+.head-r{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.addsel{display:flex;gap:6px;padding:8px 10px;border-top:1px dashed var(--line-2);background:#f8fafa}
+.addsel select{flex:1 1 auto;min-width:0;border:1px solid var(--line-2);border-radius:6px;padding:6px 8px;background:#fff;color:var(--ink);font-size:13px;cursor:pointer}
+.addsel select.ar{flex:0 1 160px}
+.absent{margin-top:10px;font-size:11.5px;color:var(--ink);border-left:3px solid var(--muted);padding:4px 10px;background:#f6f7f8}
+.absent b{font-weight:700}
+.sh-foot{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;margin-top:22px;font-size:9.5px;color:var(--muted);align-items:end}
+.sh-foot b{color:var(--ink)}
+.sign{display:flex;align-items:flex-end;justify-content:flex-end;gap:8px}
+.sign i{display:inline-block;width:140px;border-bottom:1px solid var(--ink)}
+
+/* ---------- Pool ---------- */
+.pool{max-width:1240px;margin:22px auto 0;display:grid;grid-template-columns:1fr 280px;gap:14px}
+.box{background:var(--chrome);border:1px solid var(--chrome-line);border-radius:8px;min-width:0}
+.box-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px 14px;border-bottom:1px solid var(--chrome-line)}
+.box-h h3{font-family:var(--f-disp);font-weight:700;font-size:19px;margin:0;display:flex;align-items:baseline;gap:6px}
+.box-h h3 small{font-family:var(--f-body);font-size:12px;color:var(--chrome-muted);font-weight:500}
+.search{flex:1 1 180px;min-width:0;border:1px solid var(--chrome-line);background:var(--chrome-soft);border-radius:6px;padding:6px 10px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{border:1px solid var(--chrome-line);background:var(--chrome);border-radius:99px;padding:3px 10px;font-size:12px;cursor:pointer}
+.chip.on{background:var(--chrome-ink);color:var(--chrome);border-color:var(--chrome-ink)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0;padding:6px;max-height:430px;overflow:auto;min-height:80px}
+.prow{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:5px;cursor:pointer;user-select:none}
+.prow:hover{background:var(--chrome-soft)}
+.prow .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .art{font-size:11px;color:var(--chrome-muted);white-space:nowrap}
+.prow .b{border-color:var(--chrome-muted);color:var(--chrome-muted)}
+.prow .b.eh{border-color:var(--eh);color:var(--eh)} .prow .b.bs{border-color:var(--bs);color:var(--bs)}
+.qk{display:flex;gap:3px}
+.qk button{border:none;border-radius:4px;color:#fff;font-weight:700;font-size:11px;width:24px;height:22px;cursor:pointer}
+.qk .f{background:var(--petrol)} .qk .s{background:var(--orange)}
+.pnote{padding:10px 14px;color:var(--chrome-muted);font-size:12px}
+.pgh{grid-column:1/-1;font-size:11px;font-weight:700;color:var(--chrome-muted);padding:10px 8px 3px;letter-spacing:.05em;text-transform:uppercase;display:flex;gap:6px}
+.pgh:first-child{padding-top:4px}
+.box-h select.fld{border:1px solid var(--chrome-line);background:var(--chrome-soft);border-radius:6px;padding:6px 8px;min-width:0;flex:1 1 200px;cursor:pointer}
+.seg button.on[data-model]{background:var(--chrome-ink);border-color:var(--chrome-ink);color:var(--chrome)}
+.seg button.on[data-model="F"]{background:var(--petrol);border-color:var(--petrol);color:#fff}
+.seg button.on[data-model="S"]{background:var(--orange);border-color:var(--orange);color:#fff}
+.pempty{padding:18px;color:var(--chrome-muted);font-size:13px;text-align:center;grid-column:1/-1}
+
+/* ---------- Popover ---------- */
+.pop{position:fixed;z-index:40;width:292px;background:var(--chrome);color:var(--chrome-ink);border:1px solid var(--chrome-line);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.22);padding:12px;display:flex;flex-direction:column;gap:9px}
+.pop-h b{font-family:var(--f-disp);font-size:19px;font-weight:700;display:block;line-height:1.1}
+.pop-h small{color:var(--chrome-muted);font-size:12px}
+.pop-l{font-size:11px;font-weight:700;color:var(--chrome-muted);letter-spacing:.04em;text-transform:uppercase}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.seg button{border:1px solid var(--chrome-line);background:var(--chrome);border-radius:6px;padding:6px 2px;font-size:12.5px;cursor:pointer}
+.seg button.on{color:#fff;font-weight:600}
+.seg button.on[data-act="F"]{background:var(--petrol);border-color:var(--petrol)}
+.seg button.on[data-act="S"]{background:var(--orange);border-color:var(--orange)}
+.seg button.on[data-act="X"],.seg button.on[data-act="P"]{background:#5b6469;border-color:#5b6469}
+.pop-note{font-size:12px;color:var(--chrome-muted)}
+.pop-note .sw{color:var(--orange);font-weight:700}
+.pop label{display:grid;grid-template-columns:72px 1fr;align-items:center;gap:8px;font-size:12.5px}
+.pop select{border:1px solid var(--chrome-line);background:var(--chrome-soft);border-radius:6px;padding:5px 6px;min-width:0}
+.pop-actions{display:flex;gap:6px;flex-wrap:wrap}
+@media (max-width:640px){.pop{left:max(8px,env(safe-area-inset-left,0px))!important;right:max(8px,env(safe-area-inset-right,0px));width:auto;top:auto!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))}}
+
+/* ---------- Dialog ---------- */
+.ov{position:fixed;inset:0;z-index:50;background:rgba(10,14,16,.45);display:flex;justify-content:center;align-items:flex-start;padding:calc(24px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));overflow:auto}
+.dlg{background:var(--chrome);color:var(--chrome-ink);border-radius:10px;width:min(1100px,100%);box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;max-height:calc(100vh - 48px)}
+.dlg-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--chrome-line);flex-wrap:wrap}
+.dlg-h h3{font-family:var(--f-disp);font-size:22px;margin:0;font-weight:800}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{border:none;background:none;padding:6px 10px;border-radius:6px;cursor:pointer;color:var(--chrome-muted);font-weight:600}
+.tab.on{background:var(--chrome-soft);color:var(--chrome-ink)}
+.dlg-b{padding:14px 16px;overflow:auto}
+.tblw{overflow-x:auto}
+table.mt{border-collapse:collapse;width:100%;font-size:13px;min-width:860px}
+.mt th{text-align:left;font-size:11px;color:var(--chrome-muted);font-weight:700;padding:6px;border-bottom:1px solid var(--chrome-line);position:sticky;top:0;background:var(--chrome)}
+.mt td{padding:3px 6px;border-bottom:1px solid var(--chrome-line)}
+.mt input[type=text],.mt select,.fld{border:1px solid transparent;background:transparent;border-radius:5px;padding:4px 6px;width:100%;min-width:0}
+.mt input[type=text]:hover,.mt select:hover{border-color:var(--chrome-line)}
+.mt input[type=text]:focus,.mt select:focus{border-color:var(--focus);background:var(--chrome-soft);outline:none}
+.mt td.c{text-align:center}
+.mt .nr{color:var(--chrome-muted);font-variant-numeric:tabular-nums;width:44px}
+.addrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.addrow .fld{border-color:var(--chrome-line);background:var(--chrome-soft);width:auto;flex:1 1 140px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.card{border:1px solid var(--chrome-line);border-radius:8px;padding:14px}
+.card h4{margin:0 0 10px;font-family:var(--f-disp);font-size:17px}
+.card p{margin:0 0 10px;color:var(--chrome-muted);font-size:12.5px;line-height:1.45}
+.frow{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.frow .fld{border-color:var(--chrome-line);background:var(--chrome-soft);flex:1 1 140px;width:auto}
+.frow label{font-size:12.5px;min-width:90px}
+.alist{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.alist .frow{margin:0}
+textarea.fld{width:100%;min-height:90px;border:1px solid var(--chrome-line);background:var(--chrome-soft);border-radius:6px;font:12px ui-monospace,monospace;padding:8px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1b1f22;color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:calc(100% - 32px)}
+
+@media (max-width:900px){
+  .pool{grid-template-columns:1fr}
+  .sh-foot{grid-template-columns:1fr}
+  .sign{justify-content:flex-start}
+}
+@media (max-width:760px){
+  .shifts{grid-template-columns:1fr}
+  .list{column-count:min(var(--cols,2),2)}
+  .sheet{padding:18px 14px}
+}
+@media (max-width:480px){ .list{column-count:1} .ptime span{display:none} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- Druck ---------- */
+/* Seitenformat (A3/A4) wird per Skript gesetzt */
+@media print{
+  body{background:#fff}
+  .bar,.pool,.pop,.ov,.toast,.noprint,.addsel{display:none!important}
+  .wrap{padding:0}
+  .sheet{box-shadow:none;max-width:none;padding:0;border-radius:0}
+  .shifts{grid-template-columns:var(--fw,3fr) var(--sw,2fr)!important}
+  .list{column-count:var(--cols,2)!important}
+  .sh-foot{grid-template-columns:1.3fr 1fr 1fr!important}
+  .sign{justify-content:flex-end!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="brand"><i></i>Schichtboard</div>
+    <div class="wknav">
+      <button class="btn ic" id="prevW" aria-label="Vorherige Woche">‹</button>
+      <span class="lbl" id="wkLbl">KW</span>
+      <button class="btn ic" id="nextW" aria-label="Nächste Woche">›</button>
+      <button class="btn" id="todayW">Diese Woche</button>
+    </div>
+    <div class="segt" role="group" aria-label="Gliederung"><span>Gliederung</span><button data-gb="area">Bereich</button><button data-gb="art">Beschäftigung</button></div>
+    <div class="spacer"></div>
+    <button class="btn" id="undoB" disabled>Rückgängig</button>
+    <button class="btn" id="resetW">Woche zurücksetzen</button>
+    <button class="btn" id="mgrB">Verwaltung</button>
+    <button class="btn pri" id="printB" hidden>Drucken</button>
+    <div class="swapbar" id="swapbar" hidden></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <article class="sheet" id="sheet"></article>
+  <div class="pool">
+    <section class="box" data-drop="P" id="poolBox">
+      <div class="box-h">
+        <h3>Nicht eingeplant <small id="poolCnt"></small></h3>
+        <input class="search" id="poolQ" type="search" placeholder="Name suchen …" autocomplete="off">
+        <div class="chips" id="poolChips"></div>
+      </div>
+      <div class="pgrid" id="poolGrid"></div>
+      <div class="pnote">Mit <b>F</b> / <b>S</b> direkt in Früh- oder Spätschicht setzen, per Ziehen in einen Bereich legen, oder anklicken für alle Optionen. Wer hier liegt, arbeitet diese Woche nicht im Schichtplan.</div>
+    </section>
+    <section class="box" data-drop="X" id="absBox">
+      <div class="box-h"><h3>Abwesend <small id="absCnt"></small></h3><select class="fld" data-addto="X" id="absAdd" aria-label="Abwesenheit eintragen"></select></div>
+      <div class="pgrid" id="absGrid" style="grid-template-columns:1fr"></div>
+      <div class="pnote">Urlaub, krank oder Schule. Gilt nur für diese Woche und erscheint unten auf dem Ausdruck.</div>
+    </section>
+  </div>
+</div>
+
+<div class="pop" id="pop" hidden role="dialog" aria-label="Mitarbeiter bearbeiten"></div>
+<div class="ov" id="ov" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+'use strict';
+const SEED = [{"id":"m1","nr":1,"vn":"Athanasios","nn":"Christou","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m2","nr":2,"vn":"Triantafyllos","nn":"Evangelinos","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m3","nr":3,"vn":"Jason","nn":"Liers","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m4","nr":4,"vn":"Oualid","nn":"Yahia","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m5","nr":5,"vn":"Younes","nn":"Bouyoumad","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m6","nr":6,"vn":"Patrick","nn":"Schuff","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m7","nr":7,"vn":"Dario","nn":"Gacioppo","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m8","nr":8,"vn":"Julia","nn":"Twumasi","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m9","nr":9,"vn":"Daniela","nn":"Munteanu","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m10","nr":10,"vn":"Huduq","nn":"Osumani","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m11","nr":11,"vn":"Fabio","nn":"Gacioppo","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m12","nr":12,"vn":"Brian","nn":"Kuhlemann","art":"Auszubildender","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m13","nr":13,"vn":"Dustin","nn":"Barschtipan","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m14","nr":14,"vn":"Asta","nn":"Kunicke","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m15","nr":15,"vn":"Zhenfang","nn":"Scholz-Zhang","art":"Teilzeit","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m16","nr":16,"vn":"Viktor","nn":"Shefer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m17","nr":17,"vn":"Galina","nn":"Tschilingarjan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m18","nr":18,"vn":"Milica","nn":"Schuller","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m19","nr":19,"vn":"Julia","nn":"Walter","art":"Festangestellt","q":["EH","ST"],"g":"A","area":"Ohne Bereich"},{"id":"m20","nr":20,"vn":"Irina","nn":"Dortmann","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m21","nr":21,"vn":"Ayoub","nn":"Zerrou","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m22","nr":22,"vn":"Alexander","nn":"Ponamarev","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m23","nr":23,"vn":"Rene","nn":"Philippi","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m24","nr":24,"vn":"Ngoc Thanh Tuyen","nn":"Pham","art":"Festangestellt","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m25","nr":25,"vn":"Tatiana","nn":"Munteanu","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m26","nr":26,"vn":"Emal","nn":"Khan","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m27","nr":27,"vn":"Denis","nn":"Franjo","art":"Festangestellt","q":["EH","ST"],"g":"B","area":"Lager allgemein"},{"id":"m28","nr":28,"vn":"Abdullah","nn":"Degirmenci","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m29","nr":29,"vn":"Vasyl","nn":"Messerschmidt","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m30","nr":30,"vn":"Edita","nn":"Vidziunaite","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m31","nr":31,"vn":"Hicham","nn":"Benjrid","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m32","nr":32,"vn":"Nassim","nn":"Assakali","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m33","nr":33,"vn":"Noyan","nn":"Ulrich","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m34","nr":34,"vn":"Simon","nn":"Rullik","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m35","nr":35,"vn":"Jon","nn":"Weilbächer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m36","nr":36,"vn":"Jennifer","nn":"Hebling","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m37","nr":37,"vn":"Christoph","nn":"Hünniger","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m38","nr":38,"vn":"Alpar","nn":"Bajko","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m39","nr":39,"vn":"Alexander","nn":"Dortmann","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m40","nr":40,"vn":"Eugenia","nn":"Florea","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m41","nr":41,"vn":"Fatima","nn":"Khan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m42","nr":42,"vn":"Alexander","nn":"Wegner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m43","nr":43,"vn":"Eduard","nn":"Walter","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m44","nr":44,"vn":"Aleksej","nn":"Rout","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m45","nr":45,"vn":"Zarmina","nn":"Khan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m46","nr":46,"vn":"Emran","nn":"Rahimi","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m47","nr":47,"vn":"Francesco","nn":"Maregrande","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m48","nr":48,"vn":"Ali Berkay","nn":"Döner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m49","nr":49,"vn":"Arthur","nn":"Tenenbaum","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m50","nr":50,"vn":"Desiree","nn":"Maregrande","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m51","nr":51,"vn":"Sophie","nn":"Gundlach","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m52","nr":52,"vn":"Milen","nn":"Diring","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m53","nr":53,"vn":"Petra","nn":"Hummel","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m54","nr":54,"vn":"Jamal Eddin","nn":"Zouhair","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m55","nr":55,"vn":"Mandy","nn":"Munschauer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m56","nr":56,"vn":"Jacqueline","nn":"Jung","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m57","nr":57,"vn":"Patricia","nn":"Gaudin-Hix","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m58","nr":58,"vn":"Susanne","nn":"Lendle","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m59","nr":59,"vn":"Nadia","nn":"Farfar","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m60","nr":60,"vn":"Christine","nn":"Fronia","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m61","nr":61,"vn":"Iris","nn":"Schuster","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m62","nr":62,"vn":"Jelena","nn":"Diring","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m63","nr":63,"vn":"Elena","nn":"Schäfer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m64","nr":64,"vn":"Brigitte","nn":"Brooks","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m65","nr":65,"vn":"Alena","nn":"Ponomareva","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m66","nr":66,"vn":"Christine","nn":"Spegt-Sieben","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m67","nr":67,"vn":"Gabriele","nn":"Haselsteiner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m68","nr":68,"vn":"Amanuel","nn":"Tewelde","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m69","nr":69,"vn":"Heike","nn":"Müller","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m70","nr":70,"vn":"Francesco","nn":"Mangiapane","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m71","nr":71,"vn":"Khalid","nn":"Malah","art":"Festangestellt","q":["BS","ST"],"g":"A","area":"Ohne Bereich"},{"id":"m72","nr":72,"vn":"Rita","nn":"Harff","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m73","nr":73,"vn":"Martina","nn":"Geißler","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m74","nr":74,"vn":"Oleg","nn":"Walter","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m75","nr":75,"vn":"Valeria","nn":"Shefer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m76","nr":76,"vn":"Svetlana","nn":"Schneidmüller","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m77","nr":77,"vn":"Denis","nn":"Schäfer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m78","nr":78,"vn":"Dennis","nn":"Roßtäuscher","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m79","nr":79,"vn":"Benjamin","nn":"Pirschle","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m80","nr":80,"vn":"Marcel","nn":"Dortmann","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m81","nr":81,"vn":"Quirino","nn":"Di Vincenzo","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m82","nr":82,"vn":"Jose","nn":"Da Silva Antonio","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m83","nr":83,"vn":"Yvonne","nn":"Semm","art":"Teilzeit","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m84","nr":84,"vn":"Birgit","nn":"Medlin","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m85","nr":85,"vn":"Inka","nn":"Heck","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m86","nr":86,"vn":"Natalia","nn":"Grizfeld","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m87","nr":87,"vn":"Marc","nn":"Bahn","art":"Festangestellt","q":["EH","BS","SB","ST"],"g":"A","area":"Lager allgemein"},{"id":"m88","nr":88,"vn":"Evgeniya","nn":"Rout","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m89","nr":89,"vn":"Edgaras","nn":"Edgaras","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m90","nr":90,"vn":"Jurgita","nn":"Bagdziwnaite","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m91","nr":91,"vn":"Renata","nn":"Baltusyte","art":"Litauer","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m92","nr":92,"vn":"Laim","nn":"Bubeniene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m93","nr":93,"vn":"Birute","nn":"Dabravolskiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m94","nr":94,"vn":"Domantas","nn":"Tverijonas","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m95","nr":95,"vn":"Andrius","nn":"Karlikauskas","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m96","nr":96,"vn":"Karolis","nn":"Rimkus","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m97","nr":97,"vn":"Renata","nn":"Katkevičienė","art":"Litauer","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m98","nr":98,"vn":"Era","nn":"Kirdeikyte","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m99","nr":99,"vn":"Ale","nn":"Liaukowiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m100","nr":100,"vn":"Daiva","nn":"Miller","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m101","nr":101,"vn":"Daiva","nn":"Petkeviciute","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m102","nr":102,"vn":"Brigita","nn":"Platanoviciene","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m103","nr":103,"vn":"Gytis","nn":"Pleska","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m104","nr":104,"vn":"Lina","nn":"Smilgiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m105","nr":105,"vn":"Jolanta","nn":"Stankeviciene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m106","nr":106,"vn":"Ignas","nn":"Vilkoncius","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"}];
+const KEY = 'atrikom.schichtboard.v1';
+const DAY = 864e5;
+const NOAREA = 'Ohne Bereich';
+const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const GROUPS = {A:'Wechselt – Gruppe A',B:'Wechselt – Gruppe B',F:'Fest Frühschicht (wechselt nicht)',S:'Fest Spätschicht (wechselt nicht)',P:'Kein Schichtsystem'};
+const GSHORT = {A:'wechselt, Gruppe A',B:'wechselt, Gruppe B',F:'fest in Frühschicht',S:'fest in Spätschicht',P:'kein Schichtsystem'};
+const ARTCODE = {Festangestellt:'FA',Teilzeit:'TZ',Minijob:'MJ',Auszubildender:'AZ',Litauer:'LT'};
+const ARTSHORT = {Festangestellt:'Fest',Teilzeit:'Teilzeit',Minijob:'Minijob',Auszubildender:'Azubi',Litauer:'Litauer'};
+const LOCK = '<svg class="lk" viewBox="0 0 12 12" aria-label="fest, wechselt nicht"><title>fest, wechselt nicht</title><path fill="currentColor" d="M3.5 5V3.6a2.5 2.5 0 0 1 5 0V5h.6c.5 0 .9.4.9.9v4.2c0 .5-.4.9-.9.9H2.9a.9.9 0 0 1-.9-.9V5.9c0-.5.4-.9.9-.9zm1.2 0h2.6V3.6a1.3 1.3 0 0 0-2.6 0z"/></svg>';
+const SHNAME = {F:'Frühschicht',S:'Spätschicht',X:'Abwesend',P:'Nicht eingeplant'};
+const QORDER = ['EH','BS','SB','ST'];
+const ARTS = ['Festangestellt','Teilzeit','Minijob','Auszubildender','Litauer'];
+
+function fresh(){
+  return {v:1, emps:SEED.map(e=>({...e,q:[...e.q]})),
+    areas:['Lager allgemein','Rollei','GotBag','Alaiko','Deutsche Börse',NOAREA],
+    anchor:{y:2026,w:42,aFrueh:true}, rotate:true, weeks:{},
+    times:{F:'06:00 – 14:30',S:'14:00 – 22:30'},
+    signer:'Marc Bahn, Lagerleitung', site:'atrikom fulfillment · Standort Bischofsheim', ts:null,
+    groupBy:'area', paper:'A3', showArt:false};
+}
+function load(){
+  try{ const r=localStorage.getItem(KEY); if(r){ const s=JSON.parse(r); if(s && Array.isArray(s.emps)) return Object.assign(fresh(),s); } }catch(e){}
+  return fresh();
+}
+function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+let S = load();
+let undo = [];
+let curMon = mondayOfDate(new Date());
+let selId = null, swapFrom = null, dragId = null;
+let poolFilter = 'Alle', poolQ = '';
+
+/* ---------- Datum / KW ---------- */
+function mondayOfDate(d){ const t=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()); const wd=(new Date(t).getUTCDay()+6)%7; return t-wd*DAY; }
+function isoOf(mon){ const t=new Date(mon+3*DAY); const y=t.getUTCFullYear(); const w=Math.floor((t-Date.UTC(y,0,1))/DAY/7)+1; return {y,w}; }
+function mondayOfIso(y,w){ const j4=Date.UTC(y,0,4); const wd=(new Date(j4).getUTCDay()+6)%7; return j4-wd*DAY+(w-1)*7*DAY; }
+function wkKey(mon){ const {y,w}=isoOf(mon); return y+'-W'+String(w).padStart(2,'0'); }
+function rangeTxt(mon){
+  const a=new Date(mon), b=new Date(mon+6*DAY);
+  const da=a.getUTCDate(), db=b.getUTCDate(), ma=a.getUTCMonth(), mb=b.getUTCMonth(), ya=a.getUTCFullYear(), yb=b.getUTCFullYear();
+  if(ya!==yb) return `${da}. ${MONTHS[ma]} ${ya} – ${db}. ${MONTHS[mb]} ${yb}`;
+  if(ma!==mb) return `${da}. ${MONTHS[ma]} – ${db}. ${MONTHS[mb]} ${yb}`;
+  return `${da}. – ${db}. ${MONTHS[mb]} ${yb}`;
+}
+function fmtTs(iso){ if(!iso) return '–'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()}, ${p(d.getHours())}:${p(d.getMinutes())}`; }
+
+/* ---------- Schichtlogik ---------- */
+function aFrueh(mon){
+  if(!S.rotate) return S.anchor.aFrueh;
+  const diff=Math.round((mon-mondayOfIso(S.anchor.y,S.anchor.w))/(7*DAY));
+  return (Math.abs(diff)%2===0) ? S.anchor.aFrueh : !S.anchor.aFrueh;
+}
+function week(create){ const k=wkKey(curMon); if(!S.weeks[k]){ if(!create) return {ov:{},ts:null}; S.weeks[k]={ov:{},ts:null}; } return S.weeks[k]; }
+function base(e){ const af=aFrueh(curMon); switch(e.g){ case 'A': return af?'F':'S'; case 'B': return af?'S':'F'; case 'F': return 'F'; case 'S': return 'S'; default: return 'P'; } }
+function lockedTo(e){ return e.g==='F'?'F':e.g==='S'?'S':null; }
+function blocked(e,sh){ const l=lockedTo(e); return !!l && (sh==='F'||sh==='S') && sh!==l; }
+function eff(e){ const o=week(false).ov[e.id]; return (o && !blocked(e,o)) ? o : base(e); }
+function artOf(e){ return e.art||'Ohne Angabe'; }
+function artList(){ const extra=[...new Set(S.emps.map(artOf))].filter(a=>!ARTS.includes(a)); return [...ARTS,...extra]; }
+function applyModel(e,g){ e.g=g; if(g==='F'||g==='S'){ for(const w of Object.values(S.weeks)){ const o=w.ov[e.id]; if(o==='F'||o==='S') delete w.ov[e.id]; } } }
+function lockMsg(e){ toast(`${nameOf(e)} ist fest in der ${SHNAME[lockedTo(e)]} und wechselt nicht. Ändern über „Schichtmodell“.`); }
+function swapped(e){ const o=week(false).ov[e.id]; return !!o && o!==base(e); }
+function byId(id){ return S.emps.find(e=>e.id===id); }
+function nameOf(e){ return `${e.nn}, ${e.vn}`; }
+function sortE(a,b){ return a.nn.localeCompare(b.nn,'de')||a.vn.localeCompare(b.vn,'de'); }
+function areaOf(e){ return S.areas.includes(e.area)?e.area:NOAREA; }
+
+function mutate(fn, opts){
+  opts=opts||{};
+  undo.push(JSON.stringify(S)); if(undo.length>40) undo.shift();
+  fn();
+  const now=new Date().toISOString(); S.ts=now;
+  if(opts.week!==false){ week(true).ts=now; }
+  // aufräumen: Overrides, die dem Plan entsprechen, entfernen
+  const w=S.weeks[wkKey(curMon)]; if(w){ for(const id of Object.keys(w.ov)){ const e=byId(id); if(!e||w.ov[id]===base(e)) delete w.ov[id]; } }
+  persist(); render();
+}
+function setShift(id, sh, area){
+  const e=byId(id); if(!e) return false;
+  if(blocked(e,sh)){ lockMsg(e); render(); return false; }
+  mutate(()=>{
+    const w=week(true);
+    if(sh===base(e)) delete w.ov[id]; else w.ov[id]=sh;
+    if(area) e.area=area;
+  });
+  return true;
+}
+
+/* ---------- Rendering ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function badges(e){ return QORDER.filter(q=>e.q.includes(q)).map(q=>`<i class="b ${q.toLowerCase()}">${q}</i>`).join(''); }
+function qCount(list,q){ return list.filter(e=>e.q.includes(q)).length; }
+
+function panelHtml(sh, list, groupLbl){
+  const cls = sh==='F'?'f':'s';
+  const byArt = S.groupBy==='art';
+  const byArea = (byArt ? artList().map(a=>({a, items:list.filter(e=>artOf(e)===a).sort(sortE)}))
+                        : S.areas.map(a=>({a, items:list.filter(e=>areaOf(e)===a).sort(sortE)}))).filter(x=>x.items.length);
+  const rows = list.length + byArea.length;
+  const cols = Math.max(1, Math.min(4, Math.ceil(rows/8)));
+  const pcols = Math.max(1, Math.min(4, Math.ceil(rows/12)));
+  let body = byArea.map(({a,items})=>`<div class="area" data-drop="${sh}"${byArt?'':` data-area="${esc(a)}"`}><div class="ah"><span>${esc(a)}</span><span>${items.length}</span></div>${
+    items.map(e=>`<div class="row${e.id===selId?' sel':''}" data-id="${e.id}" draggable="true" tabindex="0" title="${esc(e.vn+' '+e.nn+' · '+(e.art||'')+' · '+GSHORT[e.g])}"><span class="nm">${esc(nameOf(e))}</span>${swapped(e)?'<span class="sw" title="nur diese Woche getauscht">*</span>':''}${lockedTo(e)?LOCK:''}${S.showArt&&!byArt&&ARTCODE[e.art]?`<span class="ac">${ARTCODE[e.art]}</span>`:''}<span class="bd">${badges(e)}</span></div>`).join('')
+  }</div>`).join('');
+  if(!list.length) body = `<div class="emptyz">Noch niemand eingeplant.<br>Mitarbeiter aus „Nicht eingeplant“ hierher ziehen.</div>`;
+  return {cols, pcols, html:`<section class="panel ${cls}" data-drop="${sh}" style="--cols:${cols};--pcols:${pcols}">
+    <div class="ph"><div><h2>${SHNAME[sh]}</h2><div class="qs">ST ${qCount(list,'ST')} · EH ${qCount(list,'EH')} · BS ${qCount(list,'BS')}</div><div class="arts">${artMix(list)}</div></div>
+    <div class="ptime"><b>${esc(S.times[sh])}</b> <span>${groupLbl}</span></div></div>
+    <div class="band"></div><div class="list">${body}</div>
+    <div class="addsel"><select data-addto="${sh}" aria-label="Mitarbeiter in die ${SHNAME[sh]} einplanen">${addOptions(sh,'+ Mitarbeiter einplanen …')}</select>${byArt?'':`<select class="ar" data-addarea="${sh}" aria-label="Bereich"><option value="">Bereich: wie bisher</option>${S.areas.map(a=>`<option>${esc(a)}</option>`).join('')}</select>`}</div></section>`};
+}
+function artMix(list){ const parts=artList().map(a=>[a,list.filter(e=>artOf(e)===a).length]).filter(x=>x[1]); return parts.map(([a,n])=>`${ARTSHORT[a]||a} ${n}`).join(' · ')||'&nbsp;'; }
+function addOptions(sh, placeholder){
+  const cand=S.emps.filter(e=>eff(e)!==sh);
+  const st={F:'aus Früh',S:'aus Spät',X:'abwesend',P:''};
+  return `<option value="">${placeholder}</option>` + artList().map(a=>{
+    const items=cand.filter(e=>artOf(e)===a).sort((x,y)=>(eff(x)==='P'?0:1)-(eff(y)==='P'?0:1)||sortE(x,y));
+    if(!items.length) return '';
+    return `<optgroup label="${esc(a)} (${items.length})">${items.map(e=>{ const bl=blocked(e,sh); const s=bl?(lockedTo(e)==='F'?'fest Früh':'fest Spät'):st[eff(e)]; return `<option value="${e.id}"${bl?' disabled':''}>${esc(nameOf(e))}${s?' – '+s:''}${e.q.length?'  ['+e.q.join(' ')+']':''}</option>`; }).join('')}</optgroup>`;
+  }).join('');
+}
+function mixTable(F,Sp){
+  const rows=artList().map(a=>[a,F.filter(e=>artOf(e)===a).length,Sp.filter(e=>artOf(e)===a).length]).filter(r=>ARTS.includes(r[0])||r[1]||r[2]);
+  return `<table class="mixt"><tr><th>Beschäftigung</th><th class="fz">Früh</th><th class="sz">Spät</th><th>Σ</th></tr>${rows.map(([a,f,s])=>`<tr><td>${esc(ARTSHORT[a]||a)}</td><td>${f}</td><td>${s}</td><td>${f+s}</td></tr>`).join('')}<tr class="tot"><td>Gesamt</td><td>${F.length}</td><td>${Sp.length}</td><td>${F.length+Sp.length}</td></tr></table>`;
+}
+function applyPaper(){
+  let st=document.getElementById('pgStyle');
+  if(!st){ st=document.createElement('style'); st.id='pgStyle'; document.body.appendChild(st); }
+  const a3=S.paper!=='A4';
+  st.textContent = a3
+    ? '@page{size:A3 landscape;margin:12mm}@media print{.sheet{font-size:16px}.kw{font-size:104px}.range{font-size:28px}.sub{font-size:14px}.eyebrow{font-size:13px}.tally{min-width:110px;padding:12px 14px 10px}.tally b{font-size:42px}.tally span{font-size:13px}.ph{padding:12px 16px 10px}.ph h2{font-size:40px}.ph .qs{font-size:17px}.ph .arts{font-size:14px}.ptime{font-size:14px}.ptime b{font-size:20px}.band{height:8px}.shifts{grid-template-columns:var(--pfw) var(--psw)!important;gap:18px;margin-top:18px}.list{column-count:var(--pcols)!important}.ah{font-size:14px;padding:8px 18px 4px}.row{font-size:22px;min-height:48px;padding:9px 18px 8px}.b{font-size:12.5px;padding:1px 5px 0}.row .ac{font-size:11px}.row .lk{width:14px;height:14px}.mixt{font-size:13.5px}.sh-foot{font-size:12.5px}.absent{font-size:14px}.sign i{width:220px}}'
+    : '@page{size:A4 landscape;margin:9mm}@media print{.row{font-size:12.5px;min-height:26px;padding:4px 10px 3px}.mixt{font-size:9.5px}}';
+  const pb=document.getElementById('printB'); if(pb) pb.textContent='Drucken ('+(a3?'A3':'A4')+')';
+}
+
+function render(){
+  const {w}=isoOf(curMon);
+  $('#wkLbl').textContent='KW '+w;
+  const F=[],Sp=[],X=[],P=[];
+  for(const e of S.emps){ const s=eff(e); (s==='F'?F:s==='S'?Sp:s==='X'?X:P).push(e); }
+  const af=aFrueh(curMon);
+  const pf=panelHtml('F',F, af?'Gruppe A':'Gruppe B');
+  const ps=panelHtml('S',Sp, af?'Gruppe B':'Gruppe A');
+  const wts = week(false).ts || S.ts || new Date().toISOString();
+  const absTxt = X.length ? `<div class="absent"><b>Abwesend diese Woche (${X.length}):</b> ${X.sort(sortE).map(e=>esc(nameOf(e))).join(' · ')}</div>` : '';
+  $('#sheet').innerHTML = `
+    <header class="sh-head">
+      <div><div class="eyebrow">Kalenderwoche</div>
+        <div class="kw-row"><h1 class="kw">KW ${w}</h1><div><div class="range">${rangeTxt(curMon)}</div><div class="sub">Schichtplan · ${esc(S.site)}</div></div></div></div>
+      <div class="head-r">${mixTable(F,Sp)}<div class="tallies"><div class="tally f"><b>${F.length}</b><span>Frühschicht</span></div><div class="tally s"><b>${Sp.length}</b><span>Spätschicht</span></div></div></div>
+    </header>
+    <div class="shifts" style="--fw:${Math.max(pf.cols,1)}fr;--sw:${Math.max(ps.cols,1)}fr;--pfw:${pf.pcols}fr;--psw:${ps.pcols}fr">${pf.html}${ps.html}</div>
+    ${absTxt}
+    <footer class="sh-foot">
+      <div><b>Qualifikationen:</b> ST Staplerschein · EH Ersthelfer · BS Brandschutzhelfer · SB Sicherheitsbeauftragter · <span style="color:var(--orange);font-weight:700">*</span> nur diese Woche getauscht · <span style="color:var(--petrol)">${LOCK.replace('class="lk"','class="lk" style="width:9px;height:9px;vertical-align:-1px"')}</span> fest, wechselt nicht${S.showArt&&S.groupBy!=='art'?' · FA Fest · TZ Teilzeit · MJ Minijob · AZ Azubi · LT Litauer':''}</div>
+      <div>Stand ${fmtTs(wts)}<br>${esc(S.signer)}<br>Kurzfristige Änderungen vorbehalten.</div>
+      <div class="sign">Freigabe Lagerleitung <i></i></div>
+    </footer>`;
+  renderPool(P, X);
+  $('#absAdd').innerHTML = addOptions('X','+ Abwesenheit eintragen …');
+  document.querySelectorAll('[data-gb]').forEach(b=>b.classList.toggle('on', b.dataset.gb===(S.groupBy||'area')));
+  applyPaper();
+  $('#undoB').disabled = !undo.length;
+  const sb=$('#swapbar');
+  if(swapFrom){ const e=byId(swapFrom); sb.hidden=false; sb.innerHTML=`<span>Tauschpartner für <b>${esc(e?nameOf(e):'')}</b> anklicken – nur diese beiden Personen wechseln die Schicht.</span><span class="spacer"></span><button class="btn" id="swapCancel">Abbrechen</button>`; }
+  else sb.hidden=true;
+}
+
+function renderPool(P, X){
+  const arts=['Alle',...ARTS.filter(a=>P.some(e=>e.art===a))];
+  if(!arts.includes(poolFilter)) poolFilter='Alle';
+  $('#poolChips').innerHTML = arts.map(a=>`<button class="chip${a===poolFilter?' on':''}" data-chip="${esc(a)}">${esc(a)}</button>`).join('');
+  const q=poolQ.trim().toLowerCase();
+  const list=P.filter(e=>(poolFilter==='Alle'||e.art===poolFilter)&&(!q||(e.vn+' '+e.nn+' '+e.nn+' '+e.vn).toLowerCase().includes(q))).sort(sortE);
+  $('#poolCnt').textContent = P.length+' Personen';
+  $('#poolGrid').innerHTML = list.length ? artList().map(a=>{ const it=list.filter(e=>artOf(e)===a); return it.length?`<div class="pgh">${esc(a)} <span>${it.length}</span></div>`+it.map(e=>prow(e,true)).join(''):''; }).join('') : `<div class="pempty">${P.length?'Keine Treffer.':'Alle Mitarbeiter sind eingeplant.'}</div>`;
+  $('#absCnt').textContent = X.length ? X.length+' Personen' : '';
+  $('#absGrid').innerHTML = X.length ? X.sort(sortE).map(e=>prow(e,true)).join('') : `<div class="pempty">Niemand abwesend. Zum Eintragen hierher ziehen oder Person anklicken.</div>`;
+}
+function prow(e,quick){
+  return `<div class="prow" data-id="${e.id}" draggable="true" tabindex="0" title="${esc(e.vn+' '+e.nn)}"><span class="nm">${esc(nameOf(e))}${swapped(e)?' <span style="color:var(--orange);font-weight:700">*</span>':''}${lockedTo(e)?' '+LOCK.replace('class="lk"','class="lk" style="width:10px;height:10px;color:var(--chrome-muted)"'):''}</span><span class="art">${esc(e.art||'')}</span><span class="bd" style="display:flex;gap:2px">${badges(e)}</span>${quick?`<span class="qk"><button class="f" data-quick="F" title="In Frühschicht"${blocked(e,'F')?' disabled style="opacity:.25"':''}>F</button><button class="s" data-quick="S" title="In Spätschicht"${blocked(e,'S')?' disabled style="opacity:.25"':''}>S</button></span>`:''}</div>`;
+}
+
+/* ---------- Popover ---------- */
+function openPop(id, anchorEl){
+  const e=byId(id); if(!e) return;
+  selId=id;
+  document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));
+  document.querySelectorAll(`.row[data-id="${id}"]`).forEach(r=>r.classList.add('sel'));
+  const cur=eff(e), b=base(e);
+  const pop=$('#pop');
+  pop.innerHTML = `
+    <div class="pop-h"><b>${esc(nameOf(e))}</b><small>${esc(e.art||'')} · ${GSHORT[e.g]||''}${e.q.length?' · '+e.q.join(' '):''}</small></div>
+    <div class="pop-l">Diese Woche (KW ${isoOf(curMon).w})</div>
+    <div class="seg">${['F','S','X','P'].map(s=>`<button data-act="${s}" class="${cur===s?'on':''}">${{F:'Früh',S:'Spät',X:'Abwesend',P:'Frei'}[s]}</button>`).join('')}</div>
+    <div class="pop-note">Laut Plan: ${SHNAME[b]}${swapped(e)?' · <span class="sw">* diese Woche geändert</span>':''}</div>
+    <div class="pop-actions">
+      ${swapped(e)?'<button class="btn" data-act="reset">Zurück auf Plan</button>':''}
+      ${(cur==='F'||cur==='S')?'<button class="btn" data-act="swap">Tauschen mit …</button>':''}
+    </div>
+    <label for="popArea">Bereich<select id="popArea">${S.areas.map(a=>`<option${areaOf(e)===a?' selected':''}>${esc(a)}</option>`).join('')}</select></label>
+    <div class="pop-l">Schichtmodell (dauerhaft)</div>
+    <div class="seg">${[['R','Wechselt'],['F','Fest Früh'],['S','Fest Spät'],['P','Kein']].map(([k,l])=>`<button data-model="${k}" class="${(k==='R'?(e.g==='A'||e.g==='B'):e.g===k)?'on':''}">${l}</button>`).join('')}</div>
+    ${(e.g==='A'||e.g==='B')?`<label for="popGroup">Gruppe<select id="popGroup"><option value="A"${e.g==='A'?' selected':''}>Gruppe A</option><option value="B"${e.g==='B'?' selected':''}>Gruppe B</option></select></label>`:''}
+    ${lockedTo(e)?`<div class="pop-note">Gesperrt: bleibt jede Woche in der ${SHNAME[lockedTo(e)]} und kann nicht getauscht werden.</div>`:''}`;
+  pop.dataset.id=id;
+  pop.hidden=false;
+  const r=anchorEl.getBoundingClientRect();
+  const pw=pop.offsetWidth, ph=pop.offsetHeight, vw=window.innerWidth, vh=window.innerHeight;
+  let left=Math.min(Math.max(8,r.left), vw-pw-8);
+  let top=r.bottom+6; if(top+ph>vh-8) top=Math.max(8,r.top-ph-6);
+  pop.style.left=left+'px'; pop.style.top=top+'px';
+}
+function closePop(){ $('#pop').hidden=true; selId=null; document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel')); }
+
+$('#pop').addEventListener('click', ev=>{
+  const id=$('#pop').dataset.id; const e=byId(id); if(!e) return;
+  const mb=ev.target.closest('[data-model]');
+  if(mb){
+    const m=mb.dataset.model, af=aFrueh(curMon), cur=eff(e);
+    let g=m;
+    if(m==='R'){ if(e.g==='A'||e.g==='B') return; g = cur==='S' ? (af?'B':'A') : (af?'A':'B'); }
+    if(g===e.g) return;
+    mutate(()=>applyModel(e,g),{week:false});
+    toast(`${nameOf(e)}: ${GROUPS[g]}`); openPop(id, document.querySelector(`[data-id="${id}"]`)||document.body); return;
+  }
+  const btn=ev.target.closest('[data-act]'); if(!btn) return;
+  const act=btn.dataset.act;
+  if(act==='reset'){ mutate(()=>{ delete week(true).ov[id]; }); closePop(); toast(nameOf(e)+' ist wieder laut Plan eingeteilt.'); return; }
+  if(act==='swap'){ swapFrom=id; closePop(); render(); return; }
+  const ok=setShift(id, act); closePop();
+  if(ok) toast(`${nameOf(e)} → ${SHNAME[act]}`);
+});
+$('#pop').addEventListener('change', ev=>{
+  const id=$('#pop').dataset.id; const e=byId(id); if(!e) return;
+  if(ev.target.id==='popArea'){ const v=ev.target.value; mutate(()=>{ e.area=v; },{week:false}); closePop(); toast(`${nameOf(e)} → Bereich ${v}`); }
+  if(ev.target.id==='popGroup'){ const v=ev.target.value; mutate(()=>applyModel(e,v),{week:false}); closePop(); toast(`${nameOf(e)}: ${GROUPS[v]}`); }
+});
+
+function doSwap(a,b){
+  const ea=byId(a), eb=byId(b); if(!ea||!eb||a===b) return;
+  const sa=eff(ea), sb=eff(eb);
+  swapFrom=null;
+  if(sa===sb){ render(); toast('Beide sind schon in der gleichen Schicht.'); return; }
+  if(blocked(ea,sb)){ render(); lockMsg(ea); return; }
+  if(blocked(eb,sa)){ render(); lockMsg(eb); return; }
+  mutate(()=>{ const w=week(true); w.ov[a]=sb; w.ov[b]=sa; });
+  toast(`Getauscht: ${nameOf(ea)} ⇄ ${nameOf(eb)}`);
+}
+
+/* ---------- Events: Klick ---------- */
+document.addEventListener('click', ev=>{
+  const t=ev.target;
+  if(t.closest('#pop')) return;
+  if(t.id==='swapCancel'){ swapFrom=null; render(); return; }
+  const chip=t.closest('[data-chip]'); if(chip){ poolFilter=chip.dataset.chip; render(); return; }
+  const qk=t.closest('[data-quick]');
+  if(qk){ const id=qk.closest('[data-id]').dataset.id; const e=byId(id); if(setShift(id, qk.dataset.quick)) toast(`${nameOf(e)} → ${SHNAME[qk.dataset.quick]}`); return; }
+  const gb=t.closest('[data-gb]'); if(gb){ S.groupBy=gb.dataset.gb; persist(); closePop(); render(); return; }
+  const row=t.closest('#sheet [data-id], .pool [data-id]');
+  if(row){
+    const id=row.dataset.id;
+    if(swapFrom){ doSwap(swapFrom,id); return; }
+    if(selId===id && !$('#pop').hidden){ closePop(); return; }
+    openPop(id,row); return;
+  }
+  if(!$('#pop').hidden) closePop();
+});
+document.addEventListener('keydown', ev=>{
+  if(ev.key==='Escape'){ if(!$('#ov').hidden){ closeDlg(); return; } if(swapFrom){ swapFrom=null; render(); return; } closePop(); }
+  if(ev.key==='Enter' && ev.target.matches && ev.target.matches('[data-id]')){ ev.preventDefault(); ev.target.click(); }
+  if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase()==='z' && !ev.target.matches('input,textarea,select')){ ev.preventDefault(); doUndo(); }
+});
+document.addEventListener('change', ev=>{
+  const t=ev.target; if(!t.matches || !t.matches('[data-addto]') || !t.value) return;
+  const sh=t.dataset.addto, id=t.value, e=byId(id);
+  const arSel=t.parentElement.querySelector('[data-addarea]'); const area=arSel&&arSel.value?arSel.value:null;
+  if(setShift(id, sh, area)) toast(`${nameOf(e)} → ${SHNAME[sh]}${area?' · '+area:''}`);
+});
+window.addEventListener('resize', closePop);
+window.addEventListener('scroll', ()=>{ if(!$('#pop').hidden && window.innerWidth>640) closePop(); }, {passive:true});
+
+/* ---------- Drag & Drop (immer genau eine Person) ---------- */
+document.addEventListener('dragstart', ev=>{
+  const r=ev.target.closest && ev.target.closest('[data-id]'); if(!r) return;
+  dragId=r.dataset.id; closePop();
+  try{ ev.dataTransfer.setData('text/plain', dragId); ev.dataTransfer.effectAllowed='move'; }catch(e){}
+  r.classList.add('dragging');
+});
+document.addEventListener('dragend', ()=>{ dragId=null; document.querySelectorAll('.dragging,.drop-on').forEach(x=>x.classList.remove('dragging','drop-on')); });
+document.addEventListener('dragover', ev=>{
+  if(!dragId) return;
+  const z=ev.target.closest && ev.target.closest('[data-drop]');
+  document.querySelectorAll('.drop-on').forEach(x=>{ if(x!==z) x.classList.remove('drop-on'); });
+  if(!z) return;
+  ev.preventDefault(); z.classList.add('drop-on');
+});
+document.addEventListener('drop', ev=>{
+  const z=ev.target.closest && ev.target.closest('[data-drop]'); if(!z||!dragId) return;
+  ev.preventDefault();
+  const id=dragId; dragId=null;
+  const e=byId(id); const sh=z.dataset.drop; const area=z.dataset.area||null;
+  document.querySelectorAll('.drop-on').forEach(x=>x.classList.remove('drop-on'));
+  if(eff(e)===sh && (!area || areaOf(e)===area)) { render(); return; }
+  if(setShift(id, sh, area)) toast(`${nameOf(e)} → ${SHNAME[sh]}${area&&(sh==='F'||sh==='S')?' · '+area:''}`);
+});
+
+/* ---------- Toolbar ---------- */
+$('#prevW').onclick=()=>{ curMon-=7*DAY; swapFrom=null; closePop(); render(); };
+$('#nextW').onclick=()=>{ curMon+=7*DAY; swapFrom=null; closePop(); render(); };
+$('#todayW').onclick=()=>{ curMon=mondayOfDate(new Date()); closePop(); render(); };
+function doUndo(){ if(!undo.length) return; S=JSON.parse(undo.pop()); persist(); closePop(); render(); toast('Rückgängig gemacht.'); }
+$('#undoB').onclick=doUndo;
+let resetArm=0;
+$('#resetW').onclick=ev=>{
+  const b=ev.currentTarget;
+  if(Date.now()-resetArm>3000){ resetArm=Date.now(); b.textContent='Wirklich zurücksetzen?'; b.classList.add('warn'); setTimeout(()=>{ b.textContent='Woche zurücksetzen'; b.classList.remove('warn'); },3000); return; }
+  resetArm=0; b.textContent='Woche zurücksetzen'; b.classList.remove('warn');
+  mutate(()=>{ delete S.weeks[wkKey(curMon)]; },{week:false});
+  toast('Alle Tausche dieser Woche entfernt.');
+};
+let topLevel=false; try{ topLevel = window.self===window.top; }catch(e){}
+if(topLevel){ $('#printB').hidden=false; $('#printB').onclick=()=>window.print(); }
+
+let toastT;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2400); }
+
+/* ---------- Dialog: Mitarbeiter & Einstellungen ---------- */
+let dlgTab='m', mQ='', mModel='', mArt='';
+$('#mgrB').onclick=()=>{ closePop(); openDlg(); };
+function openDlg(){ $('#ov').hidden=false; renderDlg(); }
+function closeDlg(){ $('#ov').hidden=true; render(); }
+$('#ov').addEventListener('mousedown', ev=>{ if(ev.target.id==='ov') closeDlg(); });
+
+function renderDlg(){
+  $('#ov').innerHTML = `<div class="dlg" role="dialog" aria-label="Mitarbeiter und Einstellungen">
+    <div class="dlg-h"><h3>Verwaltung</h3>
+      <div class="tabs">
+        <button class="tab${dlgTab==='m'?' on':''}" data-tab="m">Mitarbeiter (${S.emps.length})</button>
+        <button class="tab${dlgTab==='s'?' on':''}" data-tab="s">Schichten &amp; Bereiche</button>
+        <button class="tab${dlgTab==='d'?' on':''}" data-tab="d">Daten</button>
+      </div><span class="spacer"></span><button class="btn" data-close>Fertig</button></div>
+    <div class="dlg-b" id="dlgB">${dlgTab==='m'?tabM():dlgTab==='s'?tabS():tabD()}</div></div>`;
+}
+function tabM(){
+  const q=mQ.trim().toLowerCase();
+  const list=S.emps.filter(e=>(!q||(e.vn+' '+e.nn+' '+(e.art||'')).toLowerCase().includes(q))&&(!mModel||(mModel==='R'?(e.g==='A'||e.g==='B'):e.g===mModel))&&(!mArt||artOf(e)===mArt)).sort((a,b)=>(a.nr||0)-(b.nr||0));
+  const gc=k=>S.emps.filter(e=>e.g===k).length;
+  return `<div class="addrow">
+      <input class="fld" id="mQ" type="search" placeholder="Suchen …" value="${esc(mQ)}" autocomplete="off">
+      <select class="fld" id="mModel" aria-label="Nach Schichtmodell filtern"><option value="">Alle Schichtmodelle</option>${[['R','Wechselt (A + B)'],['A','Gruppe A'],['B','Gruppe B'],['F','Fest Früh'],['S','Fest Spät'],['P','Kein Schichtsystem']].map(([k,l])=>`<option value="${k}"${mModel===k?' selected':''}>${l}</option>`).join('')}</select>
+      <select class="fld" id="mArt" aria-label="Nach Beschäftigung filtern"><option value="">Alle Beschäftigungsarten</option>${artList().map(a=>`<option${mArt===a?' selected':''}>${esc(a)}</option>`).join('')}</select>
+      <span style="color:var(--chrome-muted);font-size:12px;flex-basis:100%">Gruppe A: ${gc('A')} · Gruppe B: ${gc('B')} · fest Früh: ${gc('F')} · fest Spät: ${gc('S')} · kein Schichtsystem: ${gc('P')} · Angezeigt: ${list.length}</span>
+    </div>
+    <div class="addrow">
+      <input class="fld" id="nVn" placeholder="Vorname"><input class="fld" id="nNn" placeholder="Name">
+      <select class="fld" id="nArt">${ARTS.map(a=>`<option>${a}</option>`).join('')}</select>
+      <button class="btn pri" data-add>Mitarbeiter hinzufügen</button>
+    </div>
+    <div class="tblw"><table class="mt"><thead><tr><th>Nr.</th><th>Vorname</th><th>Name</th><th>Beschäftigung</th>${QORDER.map(q=>`<th class="c">${q}</th>`).join('')}<th>Schichtmodell</th><th>Bereich</th><th></th></tr></thead><tbody>
+    ${list.map(e=>`<tr data-eid="${e.id}">
+      <td class="nr">${e.nr||''}</td>
+      <td><input type="text" data-f="vn" value="${esc(e.vn)}" aria-label="Vorname"></td>
+      <td><input type="text" data-f="nn" value="${esc(e.nn)}" aria-label="Name"></td>
+      <td><select data-f="art" aria-label="Beschäftigung">${[...new Set([...ARTS,e.art||''])].filter(Boolean).map(a=>`<option${a===e.art?' selected':''}>${esc(a)}</option>`).join('')}</select></td>
+      ${QORDER.map(q=>`<td class="c"><input type="checkbox" data-q="${q}"${e.q.includes(q)?' checked':''} aria-label="${q}"></td>`).join('')}
+      <td><select data-f="g" aria-label="Schichtmodell">${Object.entries(GROUPS).map(([k,v])=>`<option value="${k}"${e.g===k?' selected':''}>${v}</option>`).join('')}</select></td>
+      <td><select data-f="area" aria-label="Bereich">${S.areas.map(a=>`<option${areaOf(e)===a?' selected':''}>${esc(a)}</option>`).join('')}</select></td>
+      <td><button class="btn" data-del style="padding:3px 8px;font-size:12px">Löschen</button></td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+function tabS(){
+  const af=aFrueh(curMon);
+  return `<div class="grid2">
+    <div class="card"><h4>Rotation</h4>
+      <p>Wer „Fest Früh“ oder „Fest Spät“ hat, wechselt nie und kann nicht in die andere Schicht getauscht werden. Gruppe A und B wechseln jede Woche zwischen Früh- und Spätschicht. In der angezeigten KW ${isoOf(curMon).w} hat <b>${af?'Gruppe A':'Gruppe B'}</b> Frühschicht.</p>
+      <div class="frow"><label><input type="checkbox" id="rotOn"${S.rotate?' checked':''}> Wöchentlich wechseln</label></div>
+      <div class="frow"><button class="btn" data-flip>Gruppen ab dieser Woche umdrehen</button></div>
+    </div>
+    <div class="card"><h4>Druck &amp; Anzeige</h4>
+      <div class="frow"><label for="paper">Druckformat</label><select class="fld" id="paper"><option value="A3"${S.paper!=='A4'?' selected':''}>A3 quer</option><option value="A4"${S.paper==='A4'?' selected':''}>A4 quer</option></select></div>
+      <div class="frow"><label><input type="checkbox" id="showArt"${S.showArt?' checked':''}> Kürzel der Beschäftigungsart am Namen (FA, TZ, MJ, AZ, LT)</label></div>
+      <p>Im Browser-Druckdialog „Hintergrundgrafiken“ einschalten, damit die Farbbalken mitgedruckt werden.</p>
+    </div>
+    <div class="card"><h4>Schichtzeiten</h4>
+      <div class="frow"><label for="tF">Frühschicht</label><input class="fld" id="tF" value="${esc(S.times.F)}"></div>
+      <div class="frow"><label for="tS">Spätschicht</label><input class="fld" id="tS" value="${esc(S.times.S)}"></div>
+      <div class="frow"><label for="sSite">Kopfzeile</label><input class="fld" id="sSite" value="${esc(S.site)}"></div>
+      <div class="frow"><label for="sSig">Fußzeile</label><input class="fld" id="sSig" value="${esc(S.signer)}"></div>
+    </div>
+    <div class="card"><h4>Bereiche</h4>
+      <p>Reihenfolge hier = Reihenfolge auf dem Plan. Leere Bereiche werden nicht gedruckt.</p>
+      <div class="alist">${S.areas.map((a,i)=>`<div class="frow" data-ai="${i}">
+        <input class="fld" data-aname value="${esc(a)}"${a===NOAREA?' disabled':''} aria-label="Bereichsname">
+        <button class="btn ic" data-aup${i===0?' disabled':''} aria-label="Nach oben">↑</button>
+        <button class="btn ic" data-adn${i===S.areas.length-1?' disabled':''} aria-label="Nach unten">↓</button>
+        ${a===NOAREA?'':'<button class="btn" data-adel>Entfernen</button>'}</div>`).join('')}</div>
+      <div class="frow"><input class="fld" id="newArea" placeholder="Neuer Bereich"><button class="btn pri" data-aadd>Hinzufügen</button></div>
+    </div></div>`;
+}
+function tabD(){
+  return `<div class="grid2">
+    <div class="card"><h4>Mitarbeiterliste aus Excel aktualisieren</h4>
+      <p>Liest den Reiter „Mitarbeiter“ (Nr., Vorname, Name, Beschäftigungsart, Ersthelfer, Brandschutzhelfer, Sicherheitsbeauftragter, Staplerschein). Bestehende Personen werden über die Nr. bzw. den Namen erkannt und aktualisiert, neue kommen in „Kein Schichtsystem“. Gruppen und Bereiche bleiben erhalten.</p>
+      <input type="file" id="xlsIn" accept=".xlsx,.xls">
+    </div>
+    <div class="card"><h4>Sicherung</h4>
+      <p>Alle Daten liegen nur in diesem Browser. Sichere sie regelmäßig als Datei oder Text, um sie auf ein anderes Gerät zu übertragen.</p>
+      <div class="frow"><button class="btn" data-exp>Als Datei sichern</button><button class="btn" data-copy>Als Text kopieren</button></div>
+      <div class="frow"><label for="jsonIn">Sicherung laden</label><input type="file" id="jsonIn" accept=".json,application/json"></div>
+      <textarea class="fld" id="jsonTxt" placeholder="… oder gesicherten Text hier einfügen"></textarea>
+      <div class="frow" style="margin-top:8px"><button class="btn" data-imptxt>Text laden</button></div>
+    </div>
+    <div class="card"><h4>Neu starten</h4>
+      <p>Setzt alles auf die mitgelieferte Mitarbeiterliste und die Einteilung aus KW 42 zurück. Alle Tausche und Änderungen gehen verloren.</p>
+      <button class="btn warn" data-wipe>Alles zurücksetzen</button>
+    </div></div>`;
+}
+
+const ov=$('#ov');
+ov.addEventListener('click', ev=>{
+  const t=ev.target;
+  if(t.closest('[data-close]')){ closeDlg(); return; }
+  const tab=t.closest('[data-tab]'); if(tab){ dlgTab=tab.dataset.tab; renderDlg(); return; }
+  if(t.closest('[data-add]')){
+    const vn=$('#nVn').value.trim(), nn=$('#nNn').value.trim(), art=$('#nArt').value;
+    if(!vn||!nn){ toast('Bitte Vor- und Nachname eintragen.'); return; }
+    const nr=Math.max(0,...S.emps.map(e=>e.nr||0))+1;
+    mutate(()=>{ S.emps.push({id:'m'+nr+'-'+Date.now().toString(36),nr,vn,nn,art,q:[],g:'P',area:NOAREA}); },{week:false});
+    renderDlg(); toast(`${nn}, ${vn} hinzugefügt (Nicht eingeplant).`); return;
+  }
+  const del=t.closest('[data-del]');
+  if(del){
+    const id=del.closest('[data-eid]').dataset.eid;
+    if(del.dataset.armed!=='1'){ del.dataset.armed='1'; del.textContent='Sicher?'; del.classList.add('warn'); setTimeout(()=>{ if(del.isConnected){ del.dataset.armed=''; del.textContent='Löschen'; del.classList.remove('warn'); } },3000); return; }
+    const e=byId(id);
+    mutate(()=>{ S.emps=S.emps.filter(x=>x.id!==id); for(const w of Object.values(S.weeks)) delete w.ov[id]; },{week:false});
+    renderDlg(); toast(`${e?nameOf(e):'Mitarbeiter'} gelöscht.`); return;
+  }
+  if(t.closest('[data-flip]')){ mutate(()=>{ const {y,w}=isoOf(curMon); S.anchor={y,w,aFrueh:!aFrueh(curMon)}; }); renderDlg(); toast('Gruppen umgedreht.'); return; }
+  const ai=t.closest('[data-ai]');
+  if(ai){
+    const i=+ai.dataset.ai;
+    if(t.closest('[data-aup]')&&i>0){ mutate(()=>{ const a=S.areas; [a[i-1],a[i]]=[a[i],a[i-1]]; },{week:false}); renderDlg(); return; }
+    if(t.closest('[data-adn]')&&i<S.areas.length-1){ mutate(()=>{ const a=S.areas; [a[i+1],a[i]]=[a[i],a[i+1]]; },{week:false}); renderDlg(); return; }
+    if(t.closest('[data-adel]')){ const name=S.areas[i]; mutate(()=>{ S.areas.splice(i,1); S.emps.forEach(e=>{ if(e.area===name) e.area=NOAREA; }); },{week:false}); renderDlg(); toast(`Bereich „${name}“ entfernt.`); return; }
+  }
+  if(t.closest('[data-aadd]')){ const v=$('#newArea').value.trim(); if(!v||S.areas.includes(v)) { toast(v?'Den Bereich gibt es schon.':'Bitte einen Namen eintragen.'); return; } mutate(()=>{ S.areas.splice(Math.max(0,S.areas.indexOf(NOAREA)),0,v); },{week:false}); renderDlg(); return; }
+  if(t.closest('[data-exp]')){
+    const blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`schichtboard-${wkKey(mondayOfDate(new Date()))}.json`; document.body.appendChild(a); a.click(); a.remove();
+    toast('Sicherung erstellt. Falls kein Download startet: „Als Text kopieren“ nutzen.'); return;
+  }
+  if(t.closest('[data-copy]')){
+    const txt=JSON.stringify(S);
+    const fb=()=>{ const ta=$('#jsonTxt'); ta.value=txt; ta.focus(); ta.select(); toast('Text markiert – mit Strg+C kopieren.'); };
+    try{ navigator.clipboard.writeText(txt).then(()=>toast('Sicherung in die Zwischenablage kopiert.'),fb); }catch(e){ fb(); }
+    return;
+  }
+  if(t.closest('[data-imptxt]')){ importJson($('#jsonTxt').value); return; }
+  const wipe=t.closest('[data-wipe]');
+  if(wipe){
+    if(wipe.dataset.armed!=='1'){ wipe.dataset.armed='1'; wipe.textContent='Wirklich alles zurücksetzen?'; return; }
+    mutate(()=>{ S=fresh(); },{week:false}); curMon=mondayOfIso(2026,42); renderDlg(); toast('Zurückgesetzt.'); return;
+  }
+});
+ov.addEventListener('input', ev=>{ if(ev.target.id==='mQ'){ mQ=ev.target.value; const pos=ev.target.selectionStart; renderDlg(); const i=$('#mQ'); i.focus(); try{i.setSelectionRange(pos,pos);}catch(e){} } });
+ov.addEventListener('change', ev=>{
+  const t=ev.target;
+  if(t.id==='mModel'){ mModel=t.value; renderDlg(); return; }
+  if(t.id==='mArt'){ mArt=t.value; renderDlg(); return; }
+  if(t.id==='paper'){ S.paper=t.value; persist(); applyPaper(); toast('Druckformat: '+t.value+' quer'); return; }
+  if(t.id==='showArt'){ S.showArt=t.checked; persist(); render(); return; }
+  const tr=t.closest('[data-eid]');
+  if(tr){
+    const e=byId(tr.dataset.eid); if(!e) return;
+    mutate(()=>{
+      if(t.dataset.q){ const q=t.dataset.q; e.q = t.checked ? QORDER.filter(x=>x===q||e.q.includes(x)) : e.q.filter(x=>x!==q); }
+      else if(t.dataset.f==='g'){ applyModel(e,t.value); }
+      else if(t.dataset.f){ const v=t.value.trim(); if((t.dataset.f==='vn'||t.dataset.f==='nn')&&!v){ t.value=e[t.dataset.f]; return; } e[t.dataset.f]=v; }
+    },{week:false});
+    return;
+  }
+  if(t.id==='rotOn'){ mutate(()=>{ const af=aFrueh(curMon); const {y,w}=isoOf(curMon); S.rotate=t.checked; S.anchor={y,w,aFrueh:af}; }); renderDlg(); return; }
+  if(t.id==='tF'||t.id==='tS'){ mutate(()=>{ S.times[t.id==='tF'?'F':'S']=t.value.trim(); },{week:false}); return; }
+  if(t.id==='sSite'){ mutate(()=>{ S.site=t.value.trim(); },{week:false}); return; }
+  if(t.id==='sSig'){ mutate(()=>{ S.signer=t.value.trim(); },{week:false}); return; }
+  if(t.matches('[data-aname]')){
+    const i=+t.closest('[data-ai]').dataset.ai, old=S.areas[i], v=t.value.trim();
+    if(!v||(v!==old&&S.areas.includes(v))){ t.value=old; toast('Name leer oder schon vergeben.'); return; }
+    mutate(()=>{ S.areas[i]=v; S.emps.forEach(e=>{ if(e.area===old) e.area=v; }); },{week:false}); return;
+  }
+  if(t.id==='jsonIn' && t.files[0]){ const r=new FileReader(); r.onload=()=>importJson(r.result); r.readAsText(t.files[0]); return; }
+  if(t.id==='xlsIn' && t.files[0]){ importXlsx(t.files[0]); return; }
+});
+
+function importJson(txt){
+  try{ const s=JSON.parse(txt); if(!s||!Array.isArray(s.emps)) throw 0; mutate(()=>{ S=Object.assign(fresh(),s); },{week:false}); renderDlg(); toast(`Sicherung geladen: ${S.emps.length} Mitarbeiter.`); }
+  catch(e){ toast('Das ist keine gültige Schichtboard-Sicherung.'); }
+}
+
+function loadXlsxLib(){
+  return new Promise((res,rej)=>{ if(window.XLSX) return res(window.XLSX);
+    const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=()=>res(window.XLSX); s.onerror=()=>rej(new Error('lib')); document.head.appendChild(s); });
+}
+const norm=s=>String(s||'').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+async function importXlsx(file){
+  let X; try{ X=await loadXlsxLib(); }catch(e){ toast('Excel-Import braucht eine Internetverbindung.'); return; }
+  const buf=await file.arrayBuffer();
+  let wb; try{ wb=X.read(buf,{type:'array'}); }catch(e){ toast('Die Datei konnte nicht gelesen werden.'); return; }
+  const ws=wb.Sheets['Mitarbeiter']||wb.Sheets[wb.SheetNames[0]];
+  const rows=X.utils.sheet_to_json(ws,{header:1,defval:null});
+  const hi=rows.findIndex(r=>r&&r.some(c=>norm(c)==='vorname')&&r.some(c=>norm(c)==='name'));
+  if(hi<0){ toast('Keine Spalten „Vorname“ und „Name“ gefunden.'); return; }
+  const H=rows[hi].map(norm), col=n=>H.indexOf(norm(n));
+  const c={nr:col('Nr.'),vn:col('Vorname'),nn:col('Name'),art:col('Beschäftigungsart'),EH:col('Ersthelfer'),BS:col('Brandschutzhelfer'),SB:col('Sicherheitsbeauftragter'),ST:col('Staplerschein')};
+  let upd=0, add=0;
+  mutate(()=>{
+    for(const r of rows.slice(hi+1)){
+      if(!r) continue; const vn=String(r[c.vn]||'').trim(), nn=String(r[c.nn]||'').trim(); if(!vn||!nn) continue;
+      const nr=c.nr>=0&&typeof r[c.nr]==='number'?r[c.nr]:null;
+      const q=QORDER.filter(k=>c[k]>=0&&norm(r[c[k]])==='ja');
+      const art=c.art>=0&&r[c.art]?String(r[c.art]).trim():'';
+      let e=S.emps.find(x=>norm(x.vn)===norm(vn)&&norm(x.nn)===norm(nn));
+      if(!e&&nr!=null) e=S.emps.find(x=>x.nr===nr&&(norm(x.vn)===norm(vn)||norm(x.nn)===norm(nn)));
+      if(e){ e.vn=vn; e.nn=nn; if(art) e.art=art; e.q=q; if(nr!=null) e.nr=nr; upd++; }
+      else { const n=nr!=null?nr:Math.max(0,...S.emps.map(x=>x.nr||0))+1; S.emps.push({id:'m'+n+'-'+Date.now().toString(36)+add,nr:n,vn,nn,art,q,g:'P',area:NOAREA}); add++; }
+    }
+  },{week:false});
+  renderDlg(); toast(`Excel übernommen: ${upd} aktualisiert, ${add} neu.`);
+}
+
+render();
+})();
+</script>
+
+</body>
+</html>
