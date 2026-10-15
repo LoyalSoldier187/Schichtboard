@@ -240,7 +240,8 @@ textarea.fld{width:100%;min-height:90px;border:1px solid var(--chrome-line);back
     <div class="segt" role="group" aria-label="Gliederung"><span>Gliederung</span><button data-gb="area">Bereich</button><button data-gb="art">Beschäftigung</button></div>
     <div class="spacer"></div>
     <button class="btn" id="undoB" disabled>Rückgängig</button>
-    <button class="btn" id="resetW">Woche zurücksetzen</button>
+    <button class="btn warn" id="clearB">Plan leeren</button>
+    <button class="btn" id="resetW" title="Alle Änderungen dieser Woche verwerfen, Einteilung wieder nach Gruppen">Auf Plan zurücksetzen</button>
     <button class="btn" id="mgrB">Verwaltung</button>
     <button class="btn pri" id="printB" hidden>Drucken</button>
     <div class="swapbar" id="swapbar" hidden></div>
@@ -457,7 +458,7 @@ function renderPool(P, X){
   $('#absGrid').innerHTML = X.length ? X.sort(sortE).map(e=>prow(e,true)).join('') : `<div class="pempty">Niemand abwesend. Zum Eintragen hierher ziehen oder Person anklicken.</div>`;
 }
 function prow(e,quick){
-  return `<div class="prow" data-id="${e.id}" draggable="true" tabindex="0" title="${esc(e.vn+' '+e.nn)}"><span class="nm">${esc(nameOf(e))}${swapped(e)?' <span style="color:var(--orange);font-weight:700">*</span>':''}${lockedTo(e)?' '+LOCK.replace('class="lk"','class="lk" style="width:10px;height:10px;color:var(--chrome-muted)"'):''}</span><span class="art">${esc(e.art||'')}</span><span class="bd" style="display:flex;gap:2px">${badges(e)}</span>${quick?`<span class="qk"><button class="f" data-quick="F" title="In Frühschicht"${blocked(e,'F')?' disabled style="opacity:.25"':''}>F</button><button class="s" data-quick="S" title="In Spätschicht"${blocked(e,'S')?' disabled style="opacity:.25"':''}>S</button></span>`:''}</div>`;
+  return `<div class="prow" data-id="${e.id}" draggable="true" tabindex="0" title="${esc(e.vn+' '+e.nn)}"><span class="nm">${esc(nameOf(e))}${lockedTo(e)?' '+LOCK.replace('class="lk"','class="lk" style="width:10px;height:10px;color:var(--chrome-muted)"'):''}</span><span class="art">${esc(e.art||'')}</span><span class="bd" style="display:flex;gap:2px">${badges(e)}</span>${quick?`<span class="qk"><button class="f" data-quick="F" title="In Frühschicht"${blocked(e,'F')?' disabled style="opacity:.25"':''}>F</button><button class="s" data-quick="S" title="In Spätschicht"${blocked(e,'S')?' disabled style="opacity:.25"':''}>S</button></span>`:''}</div>`;
 }
 
 /* ---------- Popover ---------- */
@@ -493,6 +494,8 @@ function openPop(id, anchorEl){
 function closePop(){ $('#pop').hidden=true; selId=null; document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel')); }
 
 $('#pop').addEventListener('click', ev=>{
+  const cb=ev.target.closest('[data-clear]');
+  if(cb){ clearPlan(cb.dataset.clear, $('#keepFix').checked); closePop(); return; }
   const id=$('#pop').dataset.id; const e=byId(id); if(!e) return;
   const mb=ev.target.closest('[data-model]');
   if(mb){
@@ -516,6 +519,35 @@ $('#pop').addEventListener('change', ev=>{
   if(ev.target.id==='popGroup'){ const v=ev.target.value; mutate(()=>applyModel(e,v),{week:false}); closePop(); toast(`${nameOf(e)}: ${GROUPS[v]}`); }
 });
 
+function openClear(){
+  const pop=$('#pop'); const {w}=isoOf(curMon);
+  let nF=0,nS=0,fix=0; for(const e of S.emps){ const s=eff(e); if(s==='F')nF++; if(s==='S')nS++; if((s==='F'||s==='S')&&lockedTo(e)) fix++; }
+  pop.dataset.id='';
+  pop.innerHTML = `<div class="pop-h"><b>Plan leeren – KW ${w}</b><small>Alle kommen nach „Nicht eingeplant“ und können neu eingeteilt werden. Gilt nur für diese Woche, „Rückgängig“ holt alles zurück.</small></div>
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="keepFix"${fix?' checked':''}> Feste Früh/Spät behalten (${fix})</label>
+    <div class="pop-actions">
+      <button class="btn pri" data-clear="FS">Ganze Woche (${nF+nS})</button>
+      <button class="btn" data-clear="F">Nur Früh (${nF})</button>
+      <button class="btn" data-clear="S">Nur Spät (${nS})</button>
+    </div>`;
+  pop.hidden=false;
+  const r=$('#clearB').getBoundingClientRect(); const pw=pop.offsetWidth;
+  pop.style.left=Math.min(Math.max(8,r.right-pw), window.innerWidth-pw-8)+'px'; pop.style.top=(r.bottom+6)+'px';
+}
+$('#clearB').onclick=()=>{ if(!$('#pop').hidden && !$('#pop').dataset.id){ closePop(); return; } closePop(); swapFrom=null; openClear(); };
+function clearPlan(which, keepFix){
+  let n=0;
+  mutate(()=>{
+    const w=week(true);
+    for(const e of S.emps){
+      const s=eff(e); if(!which.includes(s)) continue;
+      if(keepFix && lockedTo(e)) continue;
+      if(base(e)==='P') delete w.ov[e.id]; else w.ov[e.id]='P';
+      n++;
+    }
+  });
+  toast(n ? `${n} Personen aus dem Plan genommen.` : 'Da war niemand zum Leeren.');
+}
 function doSwap(a,b){
   const ea=byId(a), eb=byId(b); if(!ea||!eb||a===b) return;
   const sa=eff(ea), sb=eff(eb);
@@ -530,7 +562,7 @@ function doSwap(a,b){
 /* ---------- Events: Klick ---------- */
 document.addEventListener('click', ev=>{
   const t=ev.target;
-  if(t.closest('#pop')) return;
+  if(t.closest('#pop')||t.closest('#clearB')) return;
   if(t.id==='swapCancel'){ swapFrom=null; render(); return; }
   const chip=t.closest('[data-chip]'); if(chip){ poolFilter=chip.dataset.chip; render(); return; }
   const qk=t.closest('[data-quick]');
@@ -593,8 +625,8 @@ $('#undoB').onclick=doUndo;
 let resetArm=0;
 $('#resetW').onclick=ev=>{
   const b=ev.currentTarget;
-  if(Date.now()-resetArm>3000){ resetArm=Date.now(); b.textContent='Wirklich zurücksetzen?'; b.classList.add('warn'); setTimeout(()=>{ b.textContent='Woche zurücksetzen'; b.classList.remove('warn'); },3000); return; }
-  resetArm=0; b.textContent='Woche zurücksetzen'; b.classList.remove('warn');
+  if(Date.now()-resetArm>3000){ resetArm=Date.now(); b.textContent='Wirklich zurücksetzen?'; b.classList.add('warn'); setTimeout(()=>{ b.textContent='Auf Plan zurücksetzen'; b.classList.remove('warn'); },3000); return; }
+  resetArm=0; b.textContent='Auf Plan zurücksetzen'; b.classList.remove('warn');
   mutate(()=>{ delete S.weeks[wkKey(curMon)]; },{week:false});
   toast('Alle Tausche dieser Woche entfernt.');
 };
