@@ -92,7 +92,7 @@ button,select,input{font:inherit;color:inherit}
 .row .sw{color:var(--orange);font-weight:700;flex:none}
 .row .bd{margin-left:auto;display:flex;gap:2px;flex:none;padding-left:6px}
 .b{font-style:normal;font-size:8.5px;font-weight:700;border:1px solid var(--q);color:var(--q);border-radius:3px;padding:1px 3px 0;line-height:1.25;letter-spacing:.02em}
-.b.eh{border-color:var(--eh);color:var(--eh)} .b.bs{border-color:var(--bs);color:var(--bs)}
+.b.c-gruen{border-color:var(--eh);color:var(--eh)} .b.c-rot{border-color:var(--bs);color:var(--bs)} .b.c-blau{border-color:#2563a8;color:#2563a8} .b.c-orange{border-color:var(--orange);color:var(--orange)} .b.c-rotvoll{background:var(--bs);border-color:var(--bs);color:#fff}
 .emptyz{margin:10px 12px;border:1.5px dashed var(--line-2);border-radius:5px;padding:24px 10px;text-align:center;color:var(--muted);font-size:12px;column-span:all}
 .drop-on{box-shadow:inset 0 0 0 2px var(--focus)!important;background:#eef8fa!important}
 .panel.drop-on{box-shadow:0 0 0 2px var(--focus)!important}
@@ -134,7 +134,11 @@ button,select,input{font:inherit;color:inherit}
 .prow .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .prow .art{font-size:11px;color:var(--chrome-muted);white-space:nowrap}
 .prow .b{border-color:var(--chrome-muted);color:var(--chrome-muted)}
-.prow .b.eh{border-color:var(--eh);color:var(--eh)} .prow .b.bs{border-color:var(--bs);color:var(--bs)}
+.prow .b.c-gruen{border-color:var(--eh);color:var(--eh)} .prow .b.c-rot{border-color:var(--bs);color:var(--bs)} .prow .b.c-blau{border-color:#4a8fd8;color:#4a8fd8} .prow .b.c-orange{border-color:var(--orange);color:var(--orange)} .prow .b.c-rotvoll{background:var(--bs);border-color:var(--bs);color:#fff}
+.qchips{display:flex;flex-wrap:wrap;gap:4px}
+.qchips button{border:1px solid var(--chrome-line);background:var(--chrome);border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer;display:flex;gap:5px;align-items:center}
+.qchips button b{font-size:11px}
+.qchips button.on{background:var(--chrome-ink);color:var(--chrome);border-color:var(--chrome-ink)}
 .qk{display:flex;gap:3px}
 .qk button{border:none;border-radius:4px;color:#fff;font-weight:700;font-size:11px;width:24px;height:22px;cursor:pointer}
 .qk .f{background:var(--petrol)} .qk .s{background:var(--orange)}
@@ -148,7 +152,7 @@ button,select,input{font:inherit;color:inherit}
 .pempty{padding:18px;color:var(--chrome-muted);font-size:13px;text-align:center;grid-column:1/-1}
 
 /* ---------- Popover ---------- */
-.pop{position:fixed;z-index:40;width:292px;background:var(--chrome);color:var(--chrome-ink);border:1px solid var(--chrome-line);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.22);padding:12px;display:flex;flex-direction:column;gap:9px}
+.pop{position:fixed;z-index:40;width:292px;max-height:calc(100vh - 16px);overflow:auto;background:var(--chrome);color:var(--chrome-ink);border:1px solid var(--chrome-line);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.22);padding:12px;display:flex;flex-direction:column;gap:9px}
 .pop-h b{font-family:var(--f-disp);font-size:19px;font-weight:700;display:block;line-height:1.1}
 .pop-h small{color:var(--chrome-muted);font-size:12px}
 .pop-l{font-size:11px;font-weight:700;color:var(--chrome-muted);letter-spacing:.04em;text-transform:uppercase}
@@ -276,7 +280,7 @@ textarea.fld{width:100%;min-height:90px;border:1px solid var(--chrome-line);back
 <script>
 (function(){
 'use strict';
-const SEED = [{"id":"m1","nr":1,"vn":"Athanasios","nn":"Christou","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m2","nr":2,"vn":"Triantafyllos","nn":"Evangelinos","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m3","nr":3,"vn":"Jason","nn":"Liers","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m4","nr":4,"vn":"Oualid","nn":"Yahia","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m5","nr":5,"vn":"Younes","nn":"Bouyoumad","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m6","nr":6,"vn":"Patrick","nn":"Schuff","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m7","nr":7,"vn":"Dario","nn":"Gacioppo","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m8","nr":8,"vn":"Julia","nn":"Twumasi","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m9","nr":9,"vn":"Daniela","nn":"Munteanu","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m10","nr":10,"vn":"Huduq","nn":"Osumani","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m11","nr":11,"vn":"Fabio","nn":"Gacioppo","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m12","nr":12,"vn":"Brian","nn":"Kuhlemann","art":"Auszubildender","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m13","nr":13,"vn":"Dustin","nn":"Barschtipan","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m14","nr":14,"vn":"Asta","nn":"Kunicke","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m15","nr":15,"vn":"Zhenfang","nn":"Scholz-Zhang","art":"Teilzeit","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m16","nr":16,"vn":"Viktor","nn":"Shefer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m17","nr":17,"vn":"Galina","nn":"Tschilingarjan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m18","nr":18,"vn":"Milica","nn":"Schuller","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m19","nr":19,"vn":"Julia","nn":"Walter","art":"Festangestellt","q":["EH","ST"],"g":"A","area":"Ohne Bereich"},{"id":"m20","nr":20,"vn":"Irina","nn":"Dortmann","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m21","nr":21,"vn":"Ayoub","nn":"Zerrou","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m22","nr":22,"vn":"Alexander","nn":"Ponamarev","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m23","nr":23,"vn":"Rene","nn":"Philippi","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m24","nr":24,"vn":"Ngoc Thanh Tuyen","nn":"Pham","art":"Festangestellt","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m25","nr":25,"vn":"Tatiana","nn":"Munteanu","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m26","nr":26,"vn":"Emal","nn":"Khan","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m27","nr":27,"vn":"Denis","nn":"Franjo","art":"Festangestellt","q":["EH","ST"],"g":"B","area":"Lager allgemein"},{"id":"m28","nr":28,"vn":"Abdullah","nn":"Degirmenci","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m29","nr":29,"vn":"Vasyl","nn":"Messerschmidt","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m30","nr":30,"vn":"Edita","nn":"Vidziunaite","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m31","nr":31,"vn":"Hicham","nn":"Benjrid","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m32","nr":32,"vn":"Nassim","nn":"Assakali","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m33","nr":33,"vn":"Noyan","nn":"Ulrich","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m34","nr":34,"vn":"Simon","nn":"Rullik","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m35","nr":35,"vn":"Jon","nn":"Weilbächer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m36","nr":36,"vn":"Jennifer","nn":"Hebling","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m37","nr":37,"vn":"Christoph","nn":"Hünniger","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m38","nr":38,"vn":"Alpar","nn":"Bajko","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m39","nr":39,"vn":"Alexander","nn":"Dortmann","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m40","nr":40,"vn":"Eugenia","nn":"Florea","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m41","nr":41,"vn":"Fatima","nn":"Khan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m42","nr":42,"vn":"Alexander","nn":"Wegner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m43","nr":43,"vn":"Eduard","nn":"Walter","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m44","nr":44,"vn":"Aleksej","nn":"Rout","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m45","nr":45,"vn":"Zarmina","nn":"Khan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m46","nr":46,"vn":"Emran","nn":"Rahimi","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m47","nr":47,"vn":"Francesco","nn":"Maregrande","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m48","nr":48,"vn":"Ali Berkay","nn":"Döner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m49","nr":49,"vn":"Arthur","nn":"Tenenbaum","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m50","nr":50,"vn":"Desiree","nn":"Maregrande","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m51","nr":51,"vn":"Sophie","nn":"Gundlach","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m52","nr":52,"vn":"Milen","nn":"Diring","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m53","nr":53,"vn":"Petra","nn":"Hummel","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m54","nr":54,"vn":"Jamal Eddin","nn":"Zouhair","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m55","nr":55,"vn":"Mandy","nn":"Munschauer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m56","nr":56,"vn":"Jacqueline","nn":"Jung","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m57","nr":57,"vn":"Patricia","nn":"Gaudin-Hix","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m58","nr":58,"vn":"Susanne","nn":"Lendle","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m59","nr":59,"vn":"Nadia","nn":"Farfar","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m60","nr":60,"vn":"Christine","nn":"Fronia","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m61","nr":61,"vn":"Iris","nn":"Schuster","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m62","nr":62,"vn":"Jelena","nn":"Diring","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m63","nr":63,"vn":"Elena","nn":"Schäfer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m64","nr":64,"vn":"Brigitte","nn":"Brooks","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m65","nr":65,"vn":"Alena","nn":"Ponomareva","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m66","nr":66,"vn":"Christine","nn":"Spegt-Sieben","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m67","nr":67,"vn":"Gabriele","nn":"Haselsteiner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m68","nr":68,"vn":"Amanuel","nn":"Tewelde","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m69","nr":69,"vn":"Heike","nn":"Müller","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m70","nr":70,"vn":"Francesco","nn":"Mangiapane","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m71","nr":71,"vn":"Khalid","nn":"Malah","art":"Festangestellt","q":["BS","ST"],"g":"A","area":"Ohne Bereich"},{"id":"m72","nr":72,"vn":"Rita","nn":"Harff","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m73","nr":73,"vn":"Martina","nn":"Geißler","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m74","nr":74,"vn":"Oleg","nn":"Walter","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m75","nr":75,"vn":"Valeria","nn":"Shefer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m76","nr":76,"vn":"Svetlana","nn":"Schneidmüller","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m77","nr":77,"vn":"Denis","nn":"Schäfer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m78","nr":78,"vn":"Dennis","nn":"Roßtäuscher","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m79","nr":79,"vn":"Benjamin","nn":"Pirschle","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m80","nr":80,"vn":"Marcel","nn":"Dortmann","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m81","nr":81,"vn":"Quirino","nn":"Di Vincenzo","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m82","nr":82,"vn":"Jose","nn":"Da Silva Antonio","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m83","nr":83,"vn":"Yvonne","nn":"Semm","art":"Teilzeit","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m84","nr":84,"vn":"Birgit","nn":"Medlin","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m85","nr":85,"vn":"Inka","nn":"Heck","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m86","nr":86,"vn":"Natalia","nn":"Grizfeld","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m87","nr":87,"vn":"Marc","nn":"Bahn","art":"Festangestellt","q":["EH","BS","SB","ST"],"g":"A","area":"Lager allgemein"},{"id":"m88","nr":88,"vn":"Evgeniya","nn":"Rout","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m89","nr":89,"vn":"Edgaras","nn":"Antulis","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m90","nr":90,"vn":"Jurgita","nn":"Bagdziwnaite","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m91","nr":91,"vn":"Renata","nn":"Baltusyte","art":"Litauer","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m92","nr":92,"vn":"Laim","nn":"Bubeniene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m93","nr":93,"vn":"Birute","nn":"Dabravolskiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m94","nr":94,"vn":"Domantas","nn":"Tverijonas","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m95","nr":95,"vn":"Andrius","nn":"Karlikauskas","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m96","nr":96,"vn":"Karolis","nn":"Rimkus","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m97","nr":97,"vn":"Renata","nn":"Katkevičienė","art":"Litauer","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m98","nr":98,"vn":"Era","nn":"Kirdeikyte","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m99","nr":99,"vn":"Ale","nn":"Liaukowiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m100","nr":100,"vn":"Daiva","nn":"Miller","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m101","nr":101,"vn":"Daiva","nn":"Petkeviciute","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m102","nr":102,"vn":"Brigita","nn":"Platanoviciene","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m103","nr":103,"vn":"Gytis","nn":"Pleska","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m104","nr":104,"vn":"Lina","nn":"Smilgiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m105","nr":105,"vn":"Jolanta","nn":"Stankeviciene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m106","nr":106,"vn":"Ignas","nn":"Vilkoncius","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"}];
+const SEED = [{"id":"m1","nr":1,"vn":"Athanasios","nn":"Christou","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m2","nr":2,"vn":"Triantafyllos","nn":"Evangelinos","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m3","nr":3,"vn":"Jason","nn":"Liers","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m4","nr":4,"vn":"Oualid","nn":"Yahia","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m5","nr":5,"vn":"Younes","nn":"Bouyoumad","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m6","nr":6,"vn":"Patrick","nn":"Schuff","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m7","nr":7,"vn":"Dario","nn":"Gacioppo","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m8","nr":8,"vn":"Julia","nn":"Twumasi","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m9","nr":9,"vn":"Daniela","nn":"Munteanu","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m10","nr":10,"vn":"Huduq","nn":"Osumani","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m11","nr":11,"vn":"Fabio","nn":"Gacioppo","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m12","nr":12,"vn":"Brian","nn":"Kuhlemann","art":"Auszubildender","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m13","nr":13,"vn":"Dustin","nn":"Barschtipan","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m14","nr":14,"vn":"Asta","nn":"Kunicke","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m15","nr":15,"vn":"Zhenfang","nn":"Scholz-Zhang","art":"Teilzeit","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m16","nr":16,"vn":"Viktor","nn":"Shefer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m17","nr":17,"vn":"Galina","nn":"Tschilingarjan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m18","nr":18,"vn":"Milica","nn":"Schuller","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m19","nr":19,"vn":"Julia","nn":"Walter","art":"Festangestellt","q":["EH","ST"],"g":"A","area":"Ohne Bereich"},{"id":"m20","nr":20,"vn":"Irina","nn":"Dortmann","art":"Festangestellt","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m21","nr":21,"vn":"Ayoub","nn":"Zerrou","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m22","nr":22,"vn":"Alexander","nn":"Ponamarev","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m23","nr":23,"vn":"Rene","nn":"Philippi","art":"Festangestellt","q":["EH","BS","ST"],"g":"P","area":"Ohne Bereich"},{"id":"m24","nr":24,"vn":"Ngoc Thanh Tuyen","nn":"Pham","art":"Festangestellt","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m25","nr":25,"vn":"Tatiana","nn":"Munteanu","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m26","nr":26,"vn":"Emal","nn":"Khan","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m27","nr":27,"vn":"Denis","nn":"Franjo","art":"Festangestellt","q":["BB","ST"],"g":"B","area":"Lager allgemein"},{"id":"m28","nr":28,"vn":"Abdullah","nn":"Degirmenci","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m29","nr":29,"vn":"Vasyl","nn":"Messerschmidt","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m30","nr":30,"vn":"Edita","nn":"Vidziunaite","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m31","nr":31,"vn":"Hicham","nn":"Benjrid","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m32","nr":32,"vn":"Nassim","nn":"Assakali","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m33","nr":33,"vn":"Noyan","nn":"Ulrich","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m34","nr":34,"vn":"Simon","nn":"Rullik","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m35","nr":35,"vn":"Jon","nn":"Weilbächer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m36","nr":36,"vn":"Jennifer","nn":"Hebling","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m37","nr":37,"vn":"Christoph","nn":"Hünniger","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m38","nr":38,"vn":"Alpar","nn":"Bajko","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m39","nr":39,"vn":"Alexander","nn":"Dortmann","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m40","nr":40,"vn":"Eugenia","nn":"Florea","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m41","nr":41,"vn":"Fatima","nn":"Khan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m42","nr":42,"vn":"Alexander","nn":"Wegner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m43","nr":43,"vn":"Eduard","nn":"Walter","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m44","nr":44,"vn":"Aleksej","nn":"Rout","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m45","nr":45,"vn":"Zarmina","nn":"Khan","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m46","nr":46,"vn":"Emran","nn":"Rahimi","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m47","nr":47,"vn":"Francesco","nn":"Maregrande","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m48","nr":48,"vn":"Ali Berkay","nn":"Döner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m49","nr":49,"vn":"Arthur","nn":"Tenenbaum","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m50","nr":50,"vn":"Desiree","nn":"Maregrande","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m51","nr":51,"vn":"Sophie","nn":"Gundlach","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m52","nr":52,"vn":"Milen","nn":"Diring","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m53","nr":53,"vn":"Petra","nn":"Hummel","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m54","nr":54,"vn":"Jamal Eddin","nn":"Zouhair","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m55","nr":55,"vn":"Mandy","nn":"Munschauer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m56","nr":56,"vn":"Jacqueline","nn":"Jung","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m57","nr":57,"vn":"Patricia","nn":"Gaudin-Hix","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m58","nr":58,"vn":"Susanne","nn":"Lendle","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m59","nr":59,"vn":"Nadia","nn":"Farfar","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m60","nr":60,"vn":"Christine","nn":"Fronia","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m61","nr":61,"vn":"Iris","nn":"Schuster","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m62","nr":62,"vn":"Jelena","nn":"Diring","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m63","nr":63,"vn":"Elena","nn":"Schäfer","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m64","nr":64,"vn":"Brigitte","nn":"Brooks","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m65","nr":65,"vn":"Alena","nn":"Ponomareva","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m66","nr":66,"vn":"Christine","nn":"Spegt-Sieben","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m67","nr":67,"vn":"Gabriele","nn":"Haselsteiner","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m68","nr":68,"vn":"Amanuel","nn":"Tewelde","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m69","nr":69,"vn":"Heike","nn":"Müller","art":"Festangestellt","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m70","nr":70,"vn":"Francesco","nn":"Mangiapane","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m71","nr":71,"vn":"Khalid","nn":"Malah","art":"Festangestellt","q":["BS","ST"],"g":"A","area":"Ohne Bereich"},{"id":"m72","nr":72,"vn":"Rita","nn":"Harff","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m73","nr":73,"vn":"Martina","nn":"Geißler","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m74","nr":74,"vn":"Oleg","nn":"Walter","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m75","nr":75,"vn":"Valeria","nn":"Shefer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m76","nr":76,"vn":"Svetlana","nn":"Schneidmüller","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m77","nr":77,"vn":"Denis","nn":"Schäfer","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m78","nr":78,"vn":"Dennis","nn":"Roßtäuscher","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m79","nr":79,"vn":"Benjamin","nn":"Pirschle","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m80","nr":80,"vn":"Marcel","nn":"Dortmann","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m81","nr":81,"vn":"Quirino","nn":"Di Vincenzo","art":"Minijob","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m82","nr":82,"vn":"Jose","nn":"Da Silva Antonio","art":"Festangestellt","q":["ST"],"g":"P","area":"Ohne Bereich"},{"id":"m83","nr":83,"vn":"Yvonne","nn":"Semm","art":"Teilzeit","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m84","nr":84,"vn":"Birgit","nn":"Medlin","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m85","nr":85,"vn":"Inka","nn":"Heck","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m86","nr":86,"vn":"Natalia","nn":"Grizfeld","art":"Minijob","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m87","nr":87,"vn":"Marc","nn":"Bahn","art":"Festangestellt","q":["EH","BS","SB","ST"],"g":"A","area":"Lager allgemein"},{"id":"m88","nr":88,"vn":"Evgeniya","nn":"Rout","art":"Festangestellt","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m89","nr":89,"vn":"Edgaras","nn":"Antulis","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m90","nr":90,"vn":"Jurgita","nn":"Bagdziwnaite","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m91","nr":91,"vn":"Renata","nn":"Baltusyte","art":"Litauer","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m92","nr":92,"vn":"Laim","nn":"Bubeniene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m93","nr":93,"vn":"Birute","nn":"Dabravolskiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m94","nr":94,"vn":"Domantas","nn":"Tverijonas","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m95","nr":95,"vn":"Andrius","nn":"Karlikauskas","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m96","nr":96,"vn":"Karolis","nn":"Rimkus","art":"Litauer","q":["ST"],"g":"A","area":"Ohne Bereich"},{"id":"m97","nr":97,"vn":"Renata","nn":"Katkevičienė","art":"Litauer","q":[],"g":"P","area":"Ohne Bereich"},{"id":"m98","nr":98,"vn":"Era","nn":"Kirdeikyte","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m99","nr":99,"vn":"Ale","nn":"Liaukowiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m100","nr":100,"vn":"Daiva","nn":"Miller","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m101","nr":101,"vn":"Daiva","nn":"Petkeviciute","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m102","nr":102,"vn":"Brigita","nn":"Platanoviciene","art":"Litauer","q":[],"g":"B","area":"Ohne Bereich"},{"id":"m103","nr":103,"vn":"Gytis","nn":"Pleska","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"},{"id":"m104","nr":104,"vn":"Lina","nn":"Smilgiene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m105","nr":105,"vn":"Jolanta","nn":"Stankeviciene","art":"Litauer","q":[],"g":"A","area":"Ohne Bereich"},{"id":"m106","nr":106,"vn":"Ignas","nn":"Vilkoncius","art":"Litauer","q":["ST"],"g":"B","area":"Ohne Bereich"}];
 const KEY = 'atrikom.schichtboard.v1';
 const DAY = 864e5;
 const NOAREA = 'Ohne Bereich';
@@ -287,7 +291,12 @@ const ARTCODE = {Festangestellt:'FA',Teilzeit:'TZ',Minijob:'MJ',Auszubildender:'
 const ARTSHORT = {Festangestellt:'Fest',Teilzeit:'Teilzeit',Minijob:'Minijob',Auszubildender:'Azubi',Litauer:'Litauer'};
 const LOCK = '<svg class="lk" viewBox="0 0 12 12" aria-label="fest, wechselt nicht"><title>fest, wechselt nicht</title><path fill="currentColor" d="M3.5 5V3.6a2.5 2.5 0 0 1 5 0V5h.6c.5 0 .9.4.9.9v4.2c0 .5-.4.9-.9.9H2.9a.9.9 0 0 1-.9-.9V5.9c0-.5.4-.9.9-.9zm1.2 0h2.6V3.6a1.3 1.3 0 0 0-2.6 0z"/></svg>';
 const SHNAME = {F:'Frühschicht',S:'Spätschicht',X:'Abwesend',P:'Nicht eingeplant'};
-const QORDER = ['EH','BS','SB','ST'];
+const QCOLORS = {grau:'Grau',gruen:'Grün',rot:'Rot',rotvoll:'Rot gefüllt',blau:'Blau',orange:'Orange'};
+const DEF_QUALS = [{c:'EH',n:'Ersthelfer',col:'gruen'},{c:'BS',n:'Brandschutzhelfer',col:'rot'},{c:'BB',n:'Brandschutzbeauftragter',col:'rotvoll'},{c:'SB',n:'Sicherheitsbeauftragter',col:'grau'},{c:'ST',n:'Staplerschein',col:'grau'}];
+const XLQ = {EH:'Ersthelfer',BS:'Brandschutzhelfer',SB:'Sicherheitsbeauftragter',ST:'Staplerschein'};
+function quals(){ return Array.isArray(S.quals)&&S.quals.length ? S.quals : DEF_QUALS; }
+function qcodes(){ return quals().map(q=>q.c); }
+function qOf(c){ return quals().find(q=>q.c===c); }
 const ARTS = ['Festangestellt','Teilzeit','Minijob','Auszubildender','Litauer'];
 
 function fresh(){
@@ -296,7 +305,7 @@ function fresh(){
     anchor:{y:2026,w:42,aFrueh:true}, rotate:true, weeks:{},
     times:{F:'06:00 – 14:30',S:'14:00 – 22:30'},
     signer:'Marc Bahn, Lagerleitung', site:'atrikom fulfillment · Standort Bischofsheim', ts:null,
-    groupBy:'area', paper:'A3', showArt:false};
+    groupBy:'area', paper:'A3', showArt:false, quals:DEF_QUALS.map(q=>({...q})), mig:{}};
 }
 function load(){
   try{ const r=localStorage.getItem(KEY); if(r){ const s=JSON.parse(r); if(s && Array.isArray(s.emps)) return Object.assign(fresh(),s); } }catch(e){}
@@ -306,7 +315,12 @@ function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e)
 
 let S = load();
 // Korrektur: Nr. 89 heißt Antulis, Edgaras (in der Excel steht der Vorname doppelt)
-(function(){ const e=S.emps.find(x=>x.nr===89&&x.vn==='Edgaras'&&x.nn==='Edgaras'); if(e){ e.nn='Antulis'; } persist(); })();
+(function(){ const e=S.emps.find(x=>x.nr===89&&x.vn==='Edgaras'&&x.nn==='Edgaras'); if(e){ e.nn='Antulis'; }
+  S.mig=S.mig||{};
+  if(!S.quals.some(q=>q.c==='BB')){ const i=S.quals.findIndex(q=>q.c==='BS'); S.quals.splice(i<0?S.quals.length:i+1,0,{c:'BB',n:'Brandschutzbeauftragter',col:'rotvoll'}); }
+  // Korrektur: Denis Franjo ist Brandschutzbeauftragter, kein Ersthelfer (einmalig)
+  if(!S.mig.franjoBB){ const f=S.emps.find(x=>x.nr===27&&x.nn==='Franjo'); if(f){ f.q=f.q.filter(q=>q!=='EH'); if(!f.q.includes('BB')) f.q.push('BB'); } S.mig.franjoBB=true; }
+  persist(); })();
 let undo = [];
 let curMon = mondayOfDate(new Date());
 let selId = null, swapFrom = null, dragId = null;
@@ -373,7 +387,8 @@ function setShift(id, sh, area){
 /* ---------- Rendering ---------- */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function badges(e){ return QORDER.filter(q=>e.q.includes(q)).map(q=>`<i class="b ${q.toLowerCase()}">${q}</i>`).join(''); }
+function badges(e){ return quals().filter(q=>e.q.includes(q.c)).map(q=>`<i class="b c-${q.col||'grau'}" title="${esc(q.n)}">${esc(q.c)}</i>`).join(''); }
+function qLine(list){ const base=['ST','EH','BS']; return quals().filter(q=>base.includes(q.c)||qCount(list,q.c)).sort((a,b)=>{ const ia=base.indexOf(a.c), ib=base.indexOf(b.c); return (ia<0?9:ia)-(ib<0?9:ib); }).map(q=>`${esc(q.c)} ${qCount(list,q.c)}`).join(' · '); }
 function qCount(list,q){ return list.filter(e=>e.q.includes(q)).length; }
 
 function groupRows(list){ const byArt=S.groupBy==='art'; const keys = byArt ? artList() : S.areas; return list.length + keys.filter(a=>list.some(e=>(byArt?artOf(e):areaOf(e))===a)).length; }
@@ -397,7 +412,7 @@ function panelHtml(sh, list, groupLbl, pcols){
   }</div>`).join('');
   if(!list.length) body = `<div class="emptyz">Noch niemand eingeplant.<br>Mitarbeiter aus „Nicht eingeplant“ hierher ziehen.</div>`;
   return {cols, pcols, perCol, html:`<section class="panel ${cls}" data-drop="${sh}" style="--cols:${cols};--pcols:${pcols}">
-    <div class="ph"><div><h2>${SHNAME[sh]}</h2><div class="qs">ST ${qCount(list,'ST')} · EH ${qCount(list,'EH')} · BS ${qCount(list,'BS')}</div><div class="arts">${artMix(list)}</div></div>
+    <div class="ph"><div><h2>${SHNAME[sh]}</h2><div class="qs">${qLine(list)}</div><div class="arts">${artMix(list)}</div></div>
     <div class="ptime"><b>${esc(S.times[sh])}</b> <span>${groupLbl}</span></div></div>
     <div class="band"></div><div class="list">${body}</div>
     <div class="addsel"><select data-addto="${sh}" aria-label="Mitarbeiter in die ${SHNAME[sh]} einplanen">${addOptions(sh,'+ Mitarbeiter einplanen …')}</select>${byArt?'':`<select class="ar" data-addarea="${sh}" aria-label="Bereich"><option value="">Bereich: wie bisher</option>${S.areas.map(a=>`<option>${esc(a)}</option>`).join('')}</select>`}</div></section>`};
@@ -448,7 +463,7 @@ function render(){
     <div class="shifts" style="--fw:${Math.max(pf.cols,1)}fr;--sw:${Math.max(ps.cols,1)}fr;--pfw:${pf.pcols}fr;--psw:${ps.pcols}fr;--ps:${printScale(Math.max(pf.perCol,ps.perCol))}">${pf.html}${ps.html}</div>
     ${absTxt}
     <footer class="sh-foot">
-      <div><b>Qualifikationen:</b> ST Staplerschein · EH Ersthelfer · BS Brandschutzhelfer · SB Sicherheitsbeauftragter · <span style="color:var(--orange);font-weight:700">*</span> nur diese Woche getauscht · <span style="color:var(--petrol)">${LOCK.replace('class="lk"','class="lk" style="width:9px;height:9px;vertical-align:-1px"')}</span> fest, wechselt nicht${S.showArt&&S.groupBy!=='art'?' · FA Fest · TZ Teilzeit · MJ Minijob · AZ Azubi · LT Litauer':''}</div>
+      <div><b>Qualifikationen:</b> ${quals().map(q=>esc(q.c+' '+q.n)).join(' · ')} · <span style="color:var(--orange);font-weight:700">*</span> nur diese Woche getauscht · <span style="color:var(--petrol)">${LOCK.replace('class="lk"','class="lk" style="width:9px;height:9px;vertical-align:-1px"')}</span> fest, wechselt nicht${S.showArt&&S.groupBy!=='art'?' · FA Fest · TZ Teilzeit · MJ Minijob · AZ Azubi · LT Litauer':''}</div>
       <div>Stand ${fmtTs(wts)}<br>${esc(S.signer)}<br>Kurzfristige Änderungen vorbehalten.</div>
       <div class="sign">Freigabe Lagerleitung <i></i></div>
     </footer>`;
@@ -494,6 +509,8 @@ function openPop(id, anchorEl){
       ${swapped(e)?'<button class="btn" data-act="reset">Zurück auf Plan</button>':''}
       ${(cur==='F'||cur==='S')?'<button class="btn" data-act="swap">Tauschen mit …</button>':''}
     </div>
+    <div class="pop-l">Qualifikationen (dauerhaft)</div>
+    <div class="qchips">${quals().map(q=>`<button data-qual="${esc(q.c)}" class="${e.q.includes(q.c)?'on':''}" title="${esc(q.n)}"><b>${esc(q.c)}</b>${esc(q.n)}</button>`).join('')}</div>
     <label for="popArea">Bereich<select id="popArea">${S.areas.map(a=>`<option${areaOf(e)===a?' selected':''}>${esc(a)}</option>`).join('')}</select></label>
     <div class="pop-l">Schichtmodell (dauerhaft)</div>
     <div class="seg">${[['R','Wechselt'],['F','Fest Früh'],['S','Fest Spät'],['P','Kein']].map(([k,l])=>`<button data-model="${k}" class="${(k==='R'?(e.g==='A'||e.g==='B'):e.g===k)?'on':''}">${l}</button>`).join('')}</div>
@@ -519,6 +536,9 @@ $('#pop').addEventListener('click', ev=>{
   const cb=ev.target.closest('[data-clear]');
   if(cb){ const k=$('#keepFix'); clearPlan(cb.dataset.clear, !!(k&&k.checked)); closePop(); return; }
   const id=$('#pop').dataset.id; const e=byId(id); if(!e) return;
+  const qb=ev.target.closest('[data-qual]');
+  if(qb){ const c=qb.dataset.qual, had=e.q.includes(c); mutate(()=>{ e.q = had ? e.q.filter(x=>x!==c) : qcodes().filter(x=>x===c||e.q.includes(x)); },{week:false});
+    toast(`${nameOf(e)}: ${(qOf(c)||{n:c}).n} ${had?'entfernt':'hinzugefügt'}`); openPop(id, popAnchor()||document.querySelector(`[data-id="${id}"]`)||document.body); return; }
   const mb=ev.target.closest('[data-model]');
   if(mb){
     const m=mb.dataset.model, af=aFrueh(curMon), cur=eff(e);
@@ -636,7 +656,8 @@ function doSwap(a,b){
 /* ---------- Events: Klick ---------- */
 document.addEventListener('click', ev=>{
   const t=ev.target;
-  if(t.closest('#pop')||t.closest('#clearB')||t.closest('#xferB')) return;
+  // Klick auf ein Element, das beim Neuzeichnen ersetzt wurde (z. B. im Personen-Fenster): nichts schließen
+  if(!t.isConnected || t.closest('#pop')||t.closest('#clearB')||t.closest('#xferB')) return;
   if(t.id==='swapCancel'){ swapFrom=null; render(); return; }
   const chip=t.closest('[data-chip]'); if(chip){ poolFilter=chip.dataset.chip; render(); return; }
   const qk=t.closest('[data-quick]');
@@ -744,13 +765,13 @@ function tabM(){
       <select class="fld" id="nArt">${ARTS.map(a=>`<option>${a}</option>`).join('')}</select>
       <button class="btn pri" data-add>Mitarbeiter hinzufügen</button>
     </div>
-    <div class="tblw"><table class="mt"><thead><tr><th>Nr.</th><th>Vorname</th><th>Name</th><th>Beschäftigung</th>${QORDER.map(q=>`<th class="c">${q}</th>`).join('')}<th>Schichtmodell</th><th>Bereich</th><th></th></tr></thead><tbody>
+    <div class="tblw"><table class="mt"><thead><tr><th>Nr.</th><th>Vorname</th><th>Name</th><th>Beschäftigung</th>${quals().map(q=>`<th class="c" title="${esc(q.n)}">${esc(q.c)}</th>`).join('')}<th>Schichtmodell</th><th>Bereich</th><th></th></tr></thead><tbody>
     ${list.map(e=>`<tr data-eid="${e.id}">
       <td class="nr">${e.nr||''}</td>
       <td><input type="text" data-f="vn" value="${esc(e.vn)}" aria-label="Vorname"></td>
       <td><input type="text" data-f="nn" value="${esc(e.nn)}" aria-label="Name"></td>
       <td><select data-f="art" aria-label="Beschäftigung">${[...new Set([...ARTS,e.art||''])].filter(Boolean).map(a=>`<option${a===e.art?' selected':''}>${esc(a)}</option>`).join('')}</select></td>
-      ${QORDER.map(q=>`<td class="c"><input type="checkbox" data-q="${q}"${e.q.includes(q)?' checked':''} aria-label="${q}"></td>`).join('')}
+      ${quals().map(q=>`<td class="c"><input type="checkbox" data-q="${esc(q.c)}"${e.q.includes(q.c)?' checked':''} aria-label="${esc(q.n)}"></td>`).join('')}
       <td><select data-f="g" aria-label="Schichtmodell">${Object.entries(GROUPS).map(([k,v])=>`<option value="${k}"${e.g===k?' selected':''}>${v}</option>`).join('')}</select></td>
       <td><select data-f="area" aria-label="Bereich">${S.areas.map(a=>`<option${areaOf(e)===a?' selected':''}>${esc(a)}</option>`).join('')}</select></td>
       <td><button class="btn" data-del style="padding:3px 8px;font-size:12px">Löschen</button></td></tr>`).join('')}
@@ -774,6 +795,15 @@ function tabS(){
       <div class="frow"><label for="tS">Spätschicht</label><input class="fld" id="tS" value="${esc(S.times.S)}"></div>
       <div class="frow"><label for="sSite">Kopfzeile</label><input class="fld" id="sSite" value="${esc(S.site)}"></div>
       <div class="frow"><label for="sSig">Fußzeile</label><input class="fld" id="sSig" value="${esc(S.signer)}"></div>
+    </div>
+    <div class="card"><h4>Qualifikationen</h4>
+      <p>Kürzel erscheint als Abzeichen am Namen. Wer was hat, änderst du durch Anklicken der Person oder unter „Mitarbeiter“.</p>
+      <div class="alist">${quals().map((q,i)=>`<div class="frow" data-qi="${i}">
+        <input class="fld" data-qc value="${esc(q.c)}" maxlength="4" style="flex:0 0 64px" aria-label="Kürzel">
+        <input class="fld" data-qn value="${esc(q.n)}" aria-label="Bezeichnung">
+        <select class="fld" data-qcol style="flex:0 0 120px" aria-label="Farbe">${Object.entries(QCOLORS).map(([k,v])=>`<option value="${k}"${(q.col||'grau')===k?' selected':''}>${v}</option>`).join('')}</select>
+        <button class="btn" data-qdel>Entfernen</button></div>`).join('')}</div>
+      <div class="frow"><input class="fld" id="nqC" placeholder="Kürzel" maxlength="4" style="flex:0 0 80px"><input class="fld" id="nqN" placeholder="Bezeichnung"><button class="btn pri" data-qadd>Hinzufügen</button></div>
     </div>
     <div class="card"><h4>Bereiche</h4>
       <p>Reihenfolge hier = Reihenfolge auf dem Plan. Leere Bereiche werden nicht gedruckt.</p>
@@ -832,6 +862,18 @@ ov.addEventListener('click', ev=>{
     if(t.closest('[data-adn]')&&i<S.areas.length-1){ mutate(()=>{ const a=S.areas; [a[i+1],a[i]]=[a[i],a[i+1]]; },{week:false}); renderDlg(); return; }
     if(t.closest('[data-adel]')){ const name=S.areas[i]; mutate(()=>{ S.areas.splice(i,1); S.emps.forEach(e=>{ if(e.area===name) e.area=NOAREA; }); },{week:false}); renderDlg(); toast(`Bereich „${name}“ entfernt.`); return; }
   }
+  const qi=t.closest('[data-qi]');
+  if(qi && t.closest('[data-qdel]')){
+    const btn=t.closest('[data-qdel]'); const q=quals()[+qi.dataset.qi]; const n=S.emps.filter(e=>e.q.includes(q.c)).length;
+    if(btn.dataset.armed!=='1'){ btn.dataset.armed='1'; btn.textContent=n?`Bei ${n} entfernen?`:'Sicher?'; btn.classList.add('warn'); return; }
+    mutate(()=>{ S.quals=quals().filter(x=>x.c!==q.c); S.emps.forEach(e=>{ e.q=e.q.filter(x=>x!==q.c); }); },{week:false}); renderDlg(); toast(`Qualifikation ${q.c} entfernt.`); return;
+  }
+  if(t.closest('[data-qadd]')){
+    const c=$('#nqC').value.trim().toUpperCase(), n=$('#nqN').value.trim();
+    if(!c||!n){ toast('Bitte Kürzel und Bezeichnung eintragen.'); return; }
+    if(qcodes().includes(c)){ toast('Das Kürzel gibt es schon.'); return; }
+    mutate(()=>{ S.quals=[...quals(),{c,n,col:'grau'}]; },{week:false}); renderDlg(); toast(`Qualifikation ${c} angelegt.`); return;
+  }
   if(t.closest('[data-aadd]')){ const v=$('#newArea').value.trim(); if(!v||S.areas.includes(v)) { toast(v?'Den Bereich gibt es schon.':'Bitte einen Namen eintragen.'); return; } mutate(()=>{ S.areas.splice(Math.max(0,S.areas.indexOf(NOAREA)),0,v); },{week:false}); renderDlg(); return; }
   if(t.closest('[data-exp]')){
     const blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
@@ -862,7 +904,7 @@ ov.addEventListener('change', ev=>{
   if(tr){
     const e=byId(tr.dataset.eid); if(!e) return;
     mutate(()=>{
-      if(t.dataset.q){ const q=t.dataset.q; e.q = t.checked ? QORDER.filter(x=>x===q||e.q.includes(x)) : e.q.filter(x=>x!==q); }
+      if(t.dataset.q){ const q=t.dataset.q; e.q = t.checked ? qcodes().filter(x=>x===q||e.q.includes(x)) : e.q.filter(x=>x!==q); }
       else if(t.dataset.f==='g'){ applyModel(e,t.value); }
       else if(t.dataset.f){ const v=t.value.trim(); if((t.dataset.f==='vn'||t.dataset.f==='nn')&&!v){ t.value=e[t.dataset.f]; return; } e[t.dataset.f]=v; }
     },{week:false});
@@ -872,6 +914,13 @@ ov.addEventListener('change', ev=>{
   if(t.id==='tF'||t.id==='tS'){ mutate(()=>{ S.times[t.id==='tF'?'F':'S']=t.value.trim(); },{week:false}); return; }
   if(t.id==='sSite'){ mutate(()=>{ S.site=t.value.trim(); },{week:false}); return; }
   if(t.id==='sSig'){ mutate(()=>{ S.signer=t.value.trim(); },{week:false}); return; }
+  if(t.closest('[data-qi]')){
+    const i=+t.closest('[data-qi]').dataset.qi, q=quals()[i];
+    if(t.matches('[data-qc]')){ const v=t.value.trim().toUpperCase(); if(!v||(v!==q.c&&qcodes().includes(v))){ t.value=q.c; toast('Kürzel leer oder schon vergeben.'); return; }
+      const old=q.c; mutate(()=>{ S.quals=quals().map((x,j)=>j===i?{...x,c:v}:x); S.emps.forEach(e=>{ e.q=e.q.map(x=>x===old?v:x); }); },{week:false}); renderDlg(); return; }
+    if(t.matches('[data-qn]')){ const v=t.value.trim(); if(!v){ t.value=q.n; return; } mutate(()=>{ S.quals=quals().map((x,j)=>j===i?{...x,n:v}:x); },{week:false}); return; }
+    if(t.matches('[data-qcol]')){ const v=t.value; mutate(()=>{ S.quals=quals().map((x,j)=>j===i?{...x,col:v}:x); },{week:false}); return; }
+  }
   if(t.matches('[data-aname]')){
     const i=+t.closest('[data-ai]').dataset.ai, old=S.areas[i], v=t.value.trim();
     if(!v||(v!==old&&S.areas.includes(v))){ t.value=old; toast('Name leer oder schon vergeben.'); return; }
@@ -907,11 +956,11 @@ async function importXlsx(file){
     for(const r of rows.slice(hi+1)){
       if(!r) continue; const vn=String(r[c.vn]||'').trim(), nn=String(r[c.nn]||'').trim(); if(!vn||!nn) continue;
       const nr=c.nr>=0&&typeof r[c.nr]==='number'?r[c.nr]:null;
-      const q=QORDER.filter(k=>c[k]>=0&&norm(r[c[k]])==='ja');
+      const xq=Object.keys(XLQ).filter(k=>c[k]>=0), q=xq.filter(k=>norm(r[c[k]])==='ja');
       const art=c.art>=0&&r[c.art]?String(r[c.art]).trim():'';
       let e=S.emps.find(x=>norm(x.vn)===norm(vn)&&norm(x.nn)===norm(nn));
       if(!e&&nr!=null) e=S.emps.find(x=>x.nr===nr&&(norm(x.vn)===norm(vn)||norm(x.nn)===norm(nn)));
-      if(e){ e.vn=vn; e.nn=nn; if(art) e.art=art; e.q=q; if(nr!=null) e.nr=nr; upd++; }
+      if(e){ e.vn=vn; e.nn=nn; if(art) e.art=art; const keep=e.q.filter(x=>!xq.includes(x)); e.q=qcodes().filter(x=>q.includes(x)||keep.includes(x)); if(nr!=null) e.nr=nr; upd++; }
       else { const n=nr!=null?nr:Math.max(0,...S.emps.map(x=>x.nr||0))+1; S.emps.push({id:'m'+n+'-'+Date.now().toString(36)+add,nr:n,vn,nn,art,q,g:'P',area:NOAREA}); add++; }
     }
   },{week:false});
