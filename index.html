@@ -88,7 +88,7 @@ button,select,input{font:inherit;color:inherit}
 .row:hover{background:#f3f7f8}
 .row.sel{background:#e5f2f5;box-shadow:inset 3px 0 0 var(--petrol-band)}
 .row.dragging{opacity:.35}
-.row .nm{min-width:0;overflow-wrap:anywhere;line-height:1.2}
+.row .nm{min-width:0;overflow-wrap:break-word;line-height:1.2}
 .row .sw{color:var(--orange);font-weight:700;flex:none}
 .row .bd{margin-left:auto;display:flex;gap:2px;flex:none;padding-left:6px}
 .b{font-style:normal;font-size:8.5px;font-weight:700;border:1px solid var(--q);color:var(--q);border-radius:3px;padding:1px 3px 0;line-height:1.25;letter-spacing:.02em}
@@ -305,7 +305,7 @@ function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e)
 
 let S = load();
 // Korrektur: Nr. 89 heißt Antulis, Edgaras (in der Excel steht der Vorname doppelt)
-(function(){ const e=S.emps.find(x=>x.nr===89&&x.vn==='Edgaras'&&x.nn==='Edgaras'); if(e){ e.nn='Antulis'; persist(); } })();
+(function(){ const e=S.emps.find(x=>x.nr===89&&x.vn==='Edgaras'&&x.nn==='Edgaras'); if(e){ e.nn='Antulis'; } persist(); })();
 let undo = [];
 let curMon = mondayOfDate(new Date());
 let selId = null, swapFrom = null, dragId = null;
@@ -373,24 +373,34 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 function badges(e){ return QORDER.filter(q=>e.q.includes(q)).map(q=>`<i class="b ${q.toLowerCase()}">${q}</i>`).join(''); }
 function qCount(list,q){ return list.filter(e=>e.q.includes(q)).length; }
 
-function panelHtml(sh, list, groupLbl){
+function groupRows(list){ const byArt=S.groupBy==='art'; const keys = byArt ? artList() : S.areas; return list.length + keys.filter(a=>list.some(e=>(byArt?artOf(e):areaOf(e))===a)).length; }
+// Druckspalten auf beide Schichten verteilen, max. 6 (A3) bzw. 5 (A4) Spalten nebeneinander
+function printCols(rF, rS){
+  const C = S.paper==='A4' ? 5 : 6;
+  let f = Math.max(1, Math.ceil(rF/12)), s = Math.max(1, Math.ceil(rS/12));
+  if(f+s > C){ f = Math.min(C-1, Math.max(1, Math.round(C*rF/Math.max(1,rF+rS)))); s = C-f; }
+  return [f, s];
+}
+function panelHtml(sh, list, groupLbl, pcols){
   const cls = sh==='F'?'f':'s';
   const byArt = S.groupBy==='art';
   const byArea = (byArt ? artList().map(a=>({a, items:list.filter(e=>artOf(e)===a).sort(sortE)}))
                         : S.areas.map(a=>({a, items:list.filter(e=>areaOf(e)===a).sort(sortE)}))).filter(x=>x.items.length);
   const rows = list.length + byArea.length;
   const cols = Math.max(1, Math.min(4, Math.ceil(rows/8)));
-  const pcols = Math.max(1, Math.min(4, Math.ceil(rows/12)));
+  const perCol = Math.ceil(rows/pcols);
   let body = byArea.map(({a,items})=>`<div class="area" data-drop="${sh}"${byArt?'':` data-area="${esc(a)}"`}><div class="ah"><span>${esc(a)}</span><span>${items.length}</span></div>${
     items.map(e=>`<div class="row${e.id===selId?' sel':''}" data-id="${e.id}" draggable="true" tabindex="0" title="${esc(e.vn+' '+e.nn+' · '+(e.art||'')+' · '+GSHORT[e.g])}"><span class="nm">${esc(nameOf(e))}</span>${swapped(e)?'<span class="sw" title="nur diese Woche getauscht">*</span>':''}${lockedTo(e)?LOCK:''}${S.showArt&&!byArt&&ARTCODE[e.art]?`<span class="ac">${ARTCODE[e.art]}</span>`:''}<span class="bd">${badges(e)}</span></div>`).join('')
   }</div>`).join('');
   if(!list.length) body = `<div class="emptyz">Noch niemand eingeplant.<br>Mitarbeiter aus „Nicht eingeplant“ hierher ziehen.</div>`;
-  return {cols, pcols, html:`<section class="panel ${cls}" data-drop="${sh}" style="--cols:${cols};--pcols:${pcols}">
+  return {cols, pcols, perCol, html:`<section class="panel ${cls}" data-drop="${sh}" style="--cols:${cols};--pcols:${pcols}">
     <div class="ph"><div><h2>${SHNAME[sh]}</h2><div class="qs">ST ${qCount(list,'ST')} · EH ${qCount(list,'EH')} · BS ${qCount(list,'BS')}</div><div class="arts">${artMix(list)}</div></div>
     <div class="ptime"><b>${esc(S.times[sh])}</b> <span>${groupLbl}</span></div></div>
     <div class="band"></div><div class="list">${body}</div>
     <div class="addsel"><select data-addto="${sh}" aria-label="Mitarbeiter in die ${SHNAME[sh]} einplanen">${addOptions(sh,'+ Mitarbeiter einplanen …')}</select>${byArt?'':`<select class="ar" data-addarea="${sh}" aria-label="Bereich"><option value="">Bereich: wie bisher</option>${S.areas.map(a=>`<option>${esc(a)}</option>`).join('')}</select>`}</div></section>`};
 }
+// Druck: Zeilen werden kleiner, wenn eine Spalte sonst nicht auf die Seite passt
+function printScale(perCol){ const cap = S.paper==='A4' ? 14 : 12; return Math.max(0.4, Math.min(1, cap/Math.max(1,perCol))).toFixed(3); }
 function artMix(list){ const parts=artList().map(a=>[a,list.filter(e=>artOf(e)===a).length]).filter(x=>x[1]); return parts.map(([a,n])=>`${ARTSHORT[a]||a} ${n}`).join(' · ')||'&nbsp;'; }
 function addOptions(sh, placeholder){
   const cand=S.emps.filter(e=>eff(e)!==sh);
@@ -410,8 +420,8 @@ function applyPaper(){
   if(!st){ st=document.createElement('style'); st.id='pgStyle'; document.body.appendChild(st); }
   const a3=S.paper!=='A4';
   st.textContent = a3
-    ? '@page{size:A3 landscape;margin:12mm}@media print{.sheet{font-size:16px}.kw{font-size:104px}.range{font-size:28px}.sub{font-size:14px}.eyebrow{font-size:13px}.tally{min-width:110px;padding:12px 14px 10px}.tally b{font-size:42px}.tally span{font-size:13px}.ph{padding:12px 16px 10px}.ph h2{font-size:40px}.ph .qs{font-size:17px}.ph .arts{font-size:14px}.ptime{font-size:14px}.ptime b{font-size:20px}.band{height:8px}.shifts{grid-template-columns:var(--pfw) var(--psw)!important;gap:18px;margin-top:18px}.list{column-count:var(--pcols)!important}.ah{font-size:14px;padding:8px 18px 4px}.row{font-size:22px;min-height:48px;padding:9px 18px 8px}.b{font-size:12.5px;padding:1px 5px 0}.row .ac{font-size:11px}.row .lk{width:14px;height:14px}.mixt{font-size:13.5px}.sh-foot{font-size:12.5px}.absent{font-size:14px}.sign i{width:220px}}'
-    : '@page{size:A4 landscape;margin:9mm}@media print{.row{font-size:12.5px;min-height:26px;padding:4px 10px 3px}.mixt{font-size:9.5px}}';
+    ? '@page{size:A3 landscape;margin:12mm}@media print{.sheet{font-size:16px}.kw{font-size:104px}.range{font-size:28px}.sub{font-size:14px}.eyebrow{font-size:13px}.tally{min-width:110px;padding:12px 14px 10px}.tally b{font-size:42px}.tally span{font-size:13px}.ph{padding:12px 16px 10px}.ph h2{font-size:40px}.ph .qs{font-size:17px}.ph .arts{font-size:14px}.ptime{font-size:14px}.ptime b{font-size:20px}.band{height:8px}.shifts{grid-template-columns:var(--pfw) var(--psw)!important;gap:18px;margin-top:18px}.list{column-count:var(--pcols)!important}.ah{font-size:calc(14px * var(--ps,1));padding:calc(8px * var(--ps,1)) 18px calc(4px * var(--ps,1))}.row{font-size:calc(22px * var(--ps,1));min-height:calc(48px * var(--ps,1));padding:calc(9px * var(--ps,1)) 18px calc(8px * var(--ps,1))}.b{font-size:calc(12.5px * var(--ps,1));padding:1px 5px 0}.row .ac{font-size:11px}.row .lk{width:14px;height:14px}.mixt{font-size:13.5px}.sh-foot{font-size:12.5px}.absent{font-size:14px}.sign i{width:220px}}'
+    : '@page{size:A4 landscape;margin:9mm}@media print{.shifts{grid-template-columns:var(--pfw) var(--psw)!important}.list{column-count:var(--pcols)!important}.ah{font-size:calc(9.5px * var(--ps,1));padding:calc(4px * var(--ps,1)) 10px calc(2px * var(--ps,1))}.row{font-size:calc(12.5px * var(--ps,1));min-height:calc(26px * var(--ps,1));padding:calc(4px * var(--ps,1)) 10px calc(3px * var(--ps,1))}.b{font-size:calc(8.5px * var(--ps,1))}.mixt{font-size:9.5px}}';
   const pb=document.getElementById('printB'); if(pb) pb.textContent='Drucken ('+(a3?'A3':'A4')+')';
 }
 
@@ -421,8 +431,9 @@ function render(){
   const F=[],Sp=[],X=[],P=[];
   for(const e of S.emps){ const s=eff(e); (s==='F'?F:s==='S'?Sp:s==='X'?X:P).push(e); }
   const af=aFrueh(curMon);
-  const pf=panelHtml('F',F, af?'Gruppe A':'Gruppe B');
-  const ps=panelHtml('S',Sp, af?'Gruppe B':'Gruppe A');
+  const [pcF, pcS] = printCols(groupRows(F), groupRows(Sp));
+  const pf=panelHtml('F',F, af?'Gruppe A':'Gruppe B', pcF);
+  const ps=panelHtml('S',Sp, af?'Gruppe B':'Gruppe A', pcS);
   const wts = week(false).ts || S.ts || new Date().toISOString();
   const absTxt = X.length ? `<div class="absent"><b>Abwesend diese Woche (${X.length}):</b> ${X.sort(sortE).map(e=>esc(nameOf(e))).join(' · ')}</div>` : '';
   $('#sheet').innerHTML = `
@@ -431,7 +442,7 @@ function render(){
         <div class="kw-row"><h1 class="kw">KW ${w}</h1><div><div class="range">${rangeTxt(curMon)}</div><div class="sub">Schichtplan · ${esc(S.site)}</div></div></div></div>
       <div class="head-r">${mixTable(F,Sp)}<div class="tallies"><div class="tally f"><b>${F.length}</b><span>Frühschicht</span></div><div class="tally s"><b>${Sp.length}</b><span>Spätschicht</span></div></div></div>
     </header>
-    <div class="shifts" style="--fw:${Math.max(pf.cols,1)}fr;--sw:${Math.max(ps.cols,1)}fr;--pfw:${pf.pcols}fr;--psw:${ps.pcols}fr">${pf.html}${ps.html}</div>
+    <div class="shifts" style="--fw:${Math.max(pf.cols,1)}fr;--sw:${Math.max(ps.cols,1)}fr;--pfw:${pf.pcols}fr;--psw:${ps.pcols}fr;--ps:${printScale(Math.max(pf.perCol,ps.perCol))}">${pf.html}${ps.html}</div>
     ${absTxt}
     <footer class="sh-foot">
       <div><b>Qualifikationen:</b> ST Staplerschein · EH Ersthelfer · BS Brandschutzhelfer · SB Sicherheitsbeauftragter · <span style="color:var(--orange);font-weight:700">*</span> nur diese Woche getauscht · <span style="color:var(--petrol)">${LOCK.replace('class="lk"','class="lk" style="width:9px;height:9px;vertical-align:-1px"')}</span> fest, wechselt nicht${S.showArt&&S.groupBy!=='art'?' · FA Fest · TZ Teilzeit · MJ Minijob · AZ Azubi · LT Litauer':''}</div>
@@ -487,17 +498,22 @@ function openPop(id, anchorEl){
     ${lockedTo(e)?`<div class="pop-note">Gesperrt: bleibt jede Woche in der ${SHNAME[lockedTo(e)]} und kann nicht getauscht werden.</div>`:''}`;
   pop.dataset.id=id;
   pop.hidden=false;
+  placePop(anchorEl);
+}
+function placePop(anchorEl){
+  const pop=$('#pop'); if(!anchorEl||!anchorEl.getBoundingClientRect) return;
   const r=anchorEl.getBoundingClientRect();
   const pw=pop.offsetWidth, ph=pop.offsetHeight, vw=window.innerWidth, vh=window.innerHeight;
   let left=Math.min(Math.max(8,r.left), vw-pw-8);
   let top=r.bottom+6; if(top+ph>vh-8) top=Math.max(8,r.top-ph-6);
   pop.style.left=left+'px'; pop.style.top=top+'px';
 }
+function popAnchor(){ const id=$('#pop').dataset.id; return id ? document.querySelector(`#sheet .row[data-id="${id}"], .pool [data-id="${id}"]`) : $('#clearB'); }
 function closePop(){ $('#pop').hidden=true; selId=null; document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel')); }
 
 $('#pop').addEventListener('click', ev=>{
   const cb=ev.target.closest('[data-clear]');
-  if(cb){ clearPlan(cb.dataset.clear, $('#keepFix').checked); closePop(); return; }
+  if(cb){ const k=$('#keepFix'); clearPlan(cb.dataset.clear, !!(k&&k.checked)); closePop(); return; }
   const id=$('#pop').dataset.id; const e=byId(id); if(!e) return;
   const mb=ev.target.closest('[data-model]');
   if(mb){
@@ -523,12 +539,12 @@ $('#pop').addEventListener('change', ev=>{
 
 function openClear(){
   const pop=$('#pop'); const {w}=isoOf(curMon);
-  let nF=0,nS=0,fix=0; for(const e of S.emps){ const s=eff(e); if(s==='F')nF++; if(s==='S')nS++; if((s==='F'||s==='S')&&lockedTo(e)) fix++; }
+  let nF=0,nS=0,nX=0,fix=0; for(const e of S.emps){ const s=eff(e); if(s==='F')nF++; if(s==='S')nS++; if(s==='X')nX++; if((s==='F'||s==='S')&&lockedTo(e)) fix++; }
   pop.dataset.id='';
-  pop.innerHTML = `<div class="pop-h"><b>Plan leeren – KW ${w}</b><small>Alle kommen nach „Nicht eingeplant“ und können neu eingeteilt werden. Gilt nur für diese Woche, „Rückgängig“ holt alles zurück.</small></div>
-    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="keepFix"${fix?' checked':''}> Feste Früh/Spät behalten (${fix})</label>
+  pop.innerHTML = `<div class="pop-h"><b>Plan leeren – KW ${w}</b><small>Alle kommen nach „Nicht eingeplant“, auch fest eingetragene und abwesende Personen. Gilt nur für diese Woche, „Rückgängig“ holt alles zurück.</small></div>
+    ${fix?`<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="keepFix"> Feste Früh/Spät stehen lassen (${fix})</label>`:''}
     <div class="pop-actions">
-      <button class="btn pri" data-clear="FS">Ganze Woche (${nF+nS})</button>
+      <button class="btn pri" data-clear="FSX">Alles leeren (${nF+nS+nX})</button>
       <button class="btn" data-clear="F">Nur Früh (${nF})</button>
       <button class="btn" data-clear="S">Nur Spät (${nS})</button>
     </div>`;
@@ -590,8 +606,10 @@ document.addEventListener('change', ev=>{
   const arSel=t.parentElement.querySelector('[data-addarea]'); const area=arSel&&arSel.value?arSel.value:null;
   if(setShift(id, sh, area)) toast(`${nameOf(e)} → ${SHNAME[sh]}${area?' · '+area:''}`);
 });
-window.addEventListener('resize', closePop);
-window.addEventListener('scroll', ()=>{ if(!$('#pop').hidden && window.innerWidth>640) closePop(); }, {passive:true});
+let lastW=window.innerWidth;
+window.addEventListener('resize', ()=>{ if(window.innerWidth!==lastW){ lastW=window.innerWidth; if($('#pop').dataset.id) closePop(); } });
+// Beim Scrollen wandert das Fenster mit, statt sich zu schließen
+window.addEventListener('scroll', ()=>{ if(!$('#pop').hidden && window.innerWidth>640) placePop(popAnchor()); }, {passive:true});
 
 /* ---------- Drag & Drop (immer genau eine Person) ---------- */
 document.addEventListener('dragstart', ev=>{
